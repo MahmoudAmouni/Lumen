@@ -1,0 +1,42 @@
+/* DEFAULT = LIGHT THEME */
+:root {
+    --color-header: #f3f4f6;
+    --header-btn: #4a90e2;
+    --color-btn: #4a90e2;
+    --color-bg: #f9fafb;
+    --color-sidebar: #f3f4f6;
+    --color-prm-txt: #111827;
+    --color-sec-txt: #4b5563;
+    --color-card: #ffffff;
+    --btn-txt: #ffffff;
+}
+
+/* DARK MODE */
+:root[data-theme="dark"] {
+    --color-header: #111827;
+    --header-btn: #60a5fa;
+    --color-btn: #60a5fa;
+    --color-bg: #111827;
+    --color-sidebar: #1f2937;
+    --color-prm-txt: #f9fafb;
+    --color-sec-txt: #d1d5db;
+    --color-card: #1f2937;
+    --btn-txt: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-prm-txt);
+}

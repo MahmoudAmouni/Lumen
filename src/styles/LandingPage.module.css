@@ -1,347 +1,161 @@
-.page {
-  background-color: #F9FAFB;
-  min-height: 100vh;
-  position: relative;
+.landingContainer {
+    width: 100%;
+    background-color: var(--color-bg);
+    color: var(--color-prm-txt);
+    font-family: system-ui, sans-serif;
 }
 
-/* Hero Section */
+.landingHeader {
+    width: 100%;
+    padding: 1.2rem 3rem;
+    background-color: var(--color-header);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logoSection {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.logoImg {
+    width: 37px;
+}
+
+.logoText {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--color-prm-txt);
+}
+
+.headerLoginBtn {
+    background-color: var(--header-btn);
+    color: var(--btn-txt);
+    padding: 0.55rem 1.3rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+/* HERO */
 .heroSection {
-  padding: 0;
-  background-color: #F9FAFB;
-  position: relative;
-}
-
-.heroContent {
-  max-width: 1440px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-top: 192px;
-  padding-bottom: 80px;
+    text-align: center;
+    padding: 3rem 1rem;
+    max-width: 920px;
+    margin: auto;
 }
 
 .heroTitle {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 48px;
-  line-height: 58px;
-  color: #111827;
-  margin: 0 0 10px 0;
-  width: 777px;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
 .highlight {
-  color: #4A90E2;
+    color: #4A90E2;
 }
 
-.heroSubtitle {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
-  text-align: center;
-  color: #4B5563;
-  margin: 0 0 48px 0;
-  width: 688px;
+.heroSubtext {
+    margin-top: 1rem;
+    font-size: 1.05rem;
+    color: var(--color-sec-txt);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .heroButtons {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 24px;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 
-.loginButton {
-  width: 197px;
-  height: 55px;
-  background: #4A90E2;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
-  text-align: center;
-  color: #FFFFFF;
-  border: none;
+.primaryBtn {
+    background-color: var(--color-btn);
+    color: var(--btn-txt);
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-.loginButton:hover {
-  background-color: #357ABD;
+.secondaryBtn {
+    background-color: transparent;
+    border: 1px solid var(--color-btn);
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    color: var(--color-btn);
+    cursor: pointer;
 }
 
-.contactButton {
-  box-sizing: border-box;
-  width: 197px;
-  height: 55px;
-  border: 1.5px solid #4A90E2;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
-  text-align: center;
-  color: #4A90E2;
-  background: transparent;
+.heroPlaceholder {
+    width: 100%;
+    margin-top: 2rem;
+    height: 260px;
+    background-color: #d1d5db80;
+    border-radius: 6px;
 }
 
-.contactButton:hover {
-  background-color: rgba(74, 144, 226, 0.1);
-}
-
-.heroImagePlaceholder {
-  width: 846px;
-  height: 337px;
-  background-color: #D9D9D9;
-  border-radius: 0;
-  margin: 0 auto;
-}
-
-/* Features Section */
+/* FEATURES */
 .featuresSection {
-  padding: 0;
-  background-color: #F9FAFB;
-  position: relative;
+    padding: 2.5rem 1rem;
+    max-width: 1100px;
+    margin: auto;
 }
 
-.pageContainer {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 94px 80px 0;
-  position: relative;
-}
-
-.sectionTitle {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 40px;
-  line-height: 48px;
-  text-align: center;
-  color: #111827;
-  margin: 0 auto 83px;
-  width: 658px;
+.featuresTitle {
+    text-align: center;
+    font-size: 1.55rem;
+    margin-bottom: 2rem;
 }
 
 .featuresGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 305px);
-  gap: 20px;
-  justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
 }
 
 .featureCard {
-  width: 305px;
-  height: 217px;
-  background: #FFFFFF;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  padding: 26px 18px;
-  text-align: center;
-  border: none;
+    background-color: var(--color-card);
+    padding: 1.3rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+    text-align: center;
 }
 
 .featureTitle {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 24px;
-  line-height: 29px;
-  color: #4A90E2;
-  margin: 0 0 26px 0;
+    color: #4A90E2;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .featureText {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
-  text-align: center;
-  color: #4B5563;
-  margin: 0;
-  width: 214px;
-  margin: 0 auto;
+    margin-top: 0.6rem;
+    color: var(--color-sec-txt);
+    font-size: 0.9rem;
 }
 
-/* CTA Section */
+/* CTA */
 .ctaSection {
-  padding: 69px 0;
-  background: rgba(74, 144, 226, 0.2);
-  position: relative;
-}
-
-.ctaContainer {
-  max-width: 1440px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
+    margin-top: 3rem;
+    padding: 3rem 1rem;
+    background-color: #E5ECF6;
+    text-align: center;
 }
 
 .ctaTitle {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 40px;
-  line-height: 48px;
-  color: #111827;
-  margin: 0 auto 26px;
-  width: 889px;
+    font-size: 1.4rem;
+    margin-bottom: 1.6rem;
 }
 
-.ctaButton {
-  width: 516px;
-  height: 55px;
-  background: #60A5FA;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
-  text-align: center;
-  color: #FFFFFF;
-  margin: 0 auto;
-  border: none;
-}
-
-.ctaButton:hover {
-  background-color: #3B82F6;
-}
-
-/* Responsive */
-@media (max-width: 1440px) {
-  .heroTitle {
-    width: auto;
-    max-width: 777px;
-  }
-
-  .heroSubtitle {
-    width: auto;
-    max-width: 688px;
-  }
-
-  .heroImagePlaceholder {
-    width: 100%;
-    max-width: 846px;
-  }
-
-  .featuresGrid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 305px));
-  }
-
-  .ctaTitle {
-    width: auto;
-    max-width: 889px;
-  }
-
-  .ctaButton {
-    width: 100%;
-    max-width: 516px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .featuresGrid {
-    grid-template-columns: repeat(2, 305px);
-  }
-
-  .pageContainer {
-    padding: 60px 40px 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .heroContent {
-    padding-top: 120px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .heroTitle {
-    font-size: 36px;
-    line-height: 44px;
-    width: 100%;
-  }
-
-  .heroSubtitle {
-    font-size: 20px;
-    line-height: 26px;
-    width: 100%;
-  }
-
-  .heroButtons {
-    flex-direction: column;
-    width: 100%;
-    max-width: 300px;
-  }
-
-  .loginButton,
-  .contactButton {
-    width: 100%;
-    font-size: 20px;
-  }
-
-  .heroImagePlaceholder {
-    width: 100%;
-    height: 250px;
-  }
-
-  .featuresSection {
-    padding: 0;
-  }
-
-  .pageContainer {
-    padding: 60px 20px 0;
-  }
-
-  .sectionTitle {
-    font-size: 32px;
-    line-height: 40px;
-    width: 100%;
-    margin-bottom: 40px;
-  }
-
-  .featuresGrid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .featureCard {
-    width: 100%;
-    max-width: 305px;
-    margin: 0 auto;
-  }
-
-  .ctaSection {
-    padding: 60px 20px;
-  }
-
-  .ctaTitle {
-    font-size: 32px;
-    line-height: 40px;
-    width: 100%;
-  }
-
-  .ctaButton {
-    width: 100%;
-    max-width: 516px;
-  }
+.ctaBtn {
+    background-color: var(--color-btn);
+    border: none;
+    padding: 0.65rem 2.8rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--btn-txt);
+    cursor: pointer;
 }
