@@ -1,4 +1,4 @@
-:root[data-theme="light"]  {
+:root  {
     --color-header: #f3f4f6;
     --header-btn: #4a90e2;
     --color-btn: #4a90e2;
@@ -11,7 +11,7 @@
     --cta-bg: #e5ecf6;
 }
 
-:root {
+:root[data-theme="light"] {
     --color-header: #111827;
     --header-btn: #60a5fa;
     --color-btn: #60a5fa;

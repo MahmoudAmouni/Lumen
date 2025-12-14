@@ -179,11 +179,9 @@
     font-size: 12px;
 }
 
-/* Responsive: adjust margin when sidebar collapses */
 @media (max-width: 768px) {
     .main {
         margin-left: 60px;
-        /* matches collapsed sidebar width */
     }
 
     .searchFilterContainer {

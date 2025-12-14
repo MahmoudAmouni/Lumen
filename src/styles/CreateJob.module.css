@@ -169,6 +169,23 @@
     background-color: rgba(74, 144, 226, 0.9);
 }
 
+.error {
+    color: red;
+}
+
+.skillItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.skillSelect {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--color-bg);
+    color: var(--color-prm-txt);
+}
+
 @media (max-width: 768px) {
     .main {
         margin-left: 60px;

@@ -21,7 +21,7 @@ export default function Header({ title, actions }: HeaderProps) {
           onClick={toggleTheme}
           aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
-          {isDark ? <FaSun size={18} color="white"/> : <FaMoon size={18} color="black" />}
+          {!isDark ? <FaSun size={18} color="white"/> : <FaMoon size={18} color="black" />}
         </button>
         {actions}
         <button className={styles.logoutBtn} aria-label="Logout">
