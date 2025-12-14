@@ -143,7 +143,7 @@
 .ctaSection {
     margin-top: 3rem;
     padding: 3rem 1rem;
-    background-color: #e5ecf6;
+    background-color: var(--cta-bg);
     text-align: center;
 }
 

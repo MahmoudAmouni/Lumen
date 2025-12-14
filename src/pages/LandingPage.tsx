@@ -1,5 +1,5 @@
 import styles from "../styles/LandingPage.module.css";
-import { Footer } from "../components/Footer";
+import  Footer  from "../components/Footer";
 import logo from "../assets/lumen-logo.png";
 import { ThemeToggle } from "../components/ThemeToggle";
 

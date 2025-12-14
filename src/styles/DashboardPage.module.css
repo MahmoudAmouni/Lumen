@@ -1,0 +1,114 @@
+.main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin-left: 250px;
+}
+
+.pageContent {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: var(--color-bg);
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pageTitle {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.filterContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filterLabel {
+    font-size: 14px;
+    color: var(--color-sec-txt);
+}
+
+.jobSelect {
+    background-color: var(--color-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--color-prm-txt);
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    min-width: 160px;
+}
+
+.dropdownIcon {
+    color: var(--color-sec-txt);
+    pointer-events: none;
+    position: absolute;
+    right: 25px;
+    top: 15%;
+    transform: translateY(-50%);
+}
+
+.pipelineGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.stageCard {
+    background-color: var(--color-card);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stageCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stageLabel {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.stageCount {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-prm-txt);
+}
+
+@media (max-width: 768px) {
+    .main {
+        margin-left: 60px;
+    }
+
+    .headerRow {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .filterContainer {
+        width: 100%;
+    }
+
+    .jobSelect {
+        width: 100%;
+    }
+}
