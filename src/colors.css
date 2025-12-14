@@ -1,5 +1,4 @@
-/* DEFAULT = LIGHT THEME */
-:root {
+:root[data-theme="light"]  {
     --color-header: #f3f4f6;
     --header-btn: #4a90e2;
     --color-btn: #4a90e2;
@@ -9,10 +8,10 @@
     --color-sec-txt: #4b5563;
     --color-card: #ffffff;
     --btn-txt: #ffffff;
+    --cta-bg: #e5ecf6;
 }
 
-/* DARK MODE */
-:root[data-theme="dark"] {
+:root {
     --color-header: #111827;
     --header-btn: #60a5fa;
     --color-btn: #60a5fa;
@@ -22,6 +21,8 @@
     --color-sec-txt: #d1d5db;
     --color-card: #1f2937;
     --btn-txt: #ffffff;
+    --cta-bg: #070d1b;
+    
 }
 
 html {

@@ -1,7 +1,7 @@
-import styles from "../styles/Footer.module.css";
+import styles from "./Footer.module.css";
 import logo from "../assets/lumen-logo.png";
 
-export const Footer = () => {
+export default function Footer  ()  {
     return (
         <footer className={styles.footerContainer}>
             <div className={styles.footerLeft}>
