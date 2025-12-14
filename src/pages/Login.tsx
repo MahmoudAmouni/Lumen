@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
 
 type LoginPageProps = {
@@ -6,12 +7,19 @@ type LoginPageProps = {
 };
 
 export default function Login({ onSubmit }: LoginPageProps) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSubmit?.({ email, password });
+    // Check if admin (email contains "admin")
+    if (email.toLowerCase().includes("admin")) {
+      navigate("/admin-dashboard");
+    } else {
+      navigate("/dashboard");
+    }
   }
 
   return (
