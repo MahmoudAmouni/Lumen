@@ -179,6 +179,16 @@
     font-size: 12px;
 }
 
+.noJobs {
+    padding: 40px;
+    text-align: center;
+    color: var(--color-sec-txt);
+    font-size: 16px;
+    background-color: var(--color-card);
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
 @media (max-width: 768px) {
     .main {
         margin-left: 60px;

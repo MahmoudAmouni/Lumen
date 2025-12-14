@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { FiMinus, FiPlus } from "react-icons/fi";
+import { FiMinus, FiPlus, FiChevronUp, FiChevronDown } from "react-icons/fi";
 import styles from "../styles/CreateJob.module.css";
 
 interface DynamicSectionProps {
@@ -8,9 +8,12 @@ interface DynamicSectionProps {
   fields: { id: string }[];
   onAdd: () => void;
   onRemove: (index: number) => void;
+  onMoveUp?: (index: number) => void;
+  onMoveDown?: (index: number) => void;
   register: any;
   errors?: { name?: { message?: string } }[];
   fieldName: "pipeline" | "skills" | "criteria";
+  getFieldValue?: (index: number) => string;
 }
 
 export default function DynamicSection({
@@ -18,10 +21,31 @@ export default function DynamicSection({
   fields,
   onAdd,
   onRemove,
+  onMoveUp,
+  onMoveDown,
   register,
   errors,
   fieldName,
+  getFieldValue,
 }: DynamicSectionProps) {
+  const permanentPipelineStages = ["Applied", "Interview", "Offer", "Rejected"];
+  
+  const canRemove = (index: number) => {
+    if (fields.length <= 1) return false;
+    if (fieldName === "pipeline" && getFieldValue) {
+      const fieldValue = getFieldValue(index);
+      return !permanentPipelineStages.includes(fieldValue);
+    }
+    return true;
+  };
+
+  const canMoveUp = (index: number) => {
+    return index > 0 && onMoveUp !== undefined;
+  };
+
+  const canMoveDown = (index: number) => {
+    return index < fields.length - 1 && onMoveDown !== undefined;
+  };
   return (
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
@@ -34,6 +58,29 @@ export default function DynamicSection({
       <div className={styles.skillList}>
         {fields.map((field, index) => (
           <div key={field.id} className={styles.skillItem}>
+            {fieldName === "pipeline" && onMoveUp && onMoveDown && (
+              <div className={styles.orderButtons}>
+                <button
+                  type="button"
+                  onClick={() => onMoveUp(index)}
+                  className={styles.orderButton}
+                  disabled={!canMoveUp(index)}
+                  aria-label="Move up"
+                >
+                  <FiChevronUp size={16} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onMoveDown(index)}
+                  className={styles.orderButton}
+                  disabled={!canMoveDown(index)}
+                  aria-label="Move down"
+                >
+                  <FiChevronDown size={16} />
+                </button>
+              </div>
+            )}
+            
             <input
               {...register(`${fieldName}.${index}.name` as const, {
                 required: `${title.split(" ")[0]} name is required`,
@@ -51,7 +98,7 @@ export default function DynamicSection({
 
             {fieldName === "skills" && (
               <select
-                {...register(`${fieldName}.${index}.importance` as const)}
+                {...register(`${fieldName}.${index}.type` as const)}
                 className={styles.skillSelect}
                 aria-label="Skill importance"
               >
@@ -64,7 +111,7 @@ export default function DynamicSection({
               type="button"
               onClick={() => onRemove(index)}
               className={styles.removeButton}
-              disabled={fields.length <= 1}
+              disabled={!canRemove(index)}
               aria-label={`Remove ${fieldName.slice(0, -1)}`}
             >
               <FiMinus size={14} />

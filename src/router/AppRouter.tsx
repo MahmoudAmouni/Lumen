@@ -5,6 +5,10 @@ import JobList from "../pages/JobList";
 import Dashboard from "../pages/Dashboard";
 import CreateJob from "../pages/CreateJob";
 import Candidates from "../pages/Candidates";
+import CandidateDetail from "../pages/CandidateDetail";
+import AICopilot from "../pages/AICopilot";
+import InterviewNotes from "../pages/InterviewNotes";
+import AdminDashboard from "../pages/AdminDashboard";
 
 export const AppRouter = () => {
   return (
@@ -16,6 +20,10 @@ export const AppRouter = () => {
         <Route path="/Job" element={<JobList />} />
         <Route path="/createJob" element={<CreateJob />} />
         <Route path="/candidate" element={<Candidates />} />
+        <Route path="/candidate-detail" element={<CandidateDetail />} />
+        <Route path="/ai-copilot" element={<AICopilot />} />
+        <Route path="/interview-notes" element={<InterviewNotes />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
