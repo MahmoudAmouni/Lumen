@@ -9,6 +9,7 @@ import CandidateDetail from "../pages/CandidateDetail";
 import AICopilot from "../pages/AICopilot";
 import InterviewNotes from "../pages/InterviewNotes";
 import AdminDashboard from "../pages/AdminDashboard";
+import JobDetail from "../pages/JobDetail";
 
 export const AppRouter = () => {
   return (
