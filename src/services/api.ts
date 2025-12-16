@@ -5,6 +5,37 @@ interface ApiResponse<T> {
   payload: T;
 }
 
+function formatValidationErrors(payload: any): string {
+  if (typeof payload === "string") {
+    return payload;
+  }
+
+  if (payload && typeof payload === "object") {
+    if ("message" in payload) {
+      return String(payload.message);
+    }
+
+    const errors: string[] = [];
+    for (const [field, messages] of Object.entries(payload)) {
+      if (Array.isArray(messages)) {
+        messages.forEach((msg: string) => {
+          errors.push(`${field}: ${msg}`);
+        });
+      } else if (typeof messages === "string") {
+        errors.push(`${field}: ${messages}`);
+      }
+    }
+
+    if (errors.length > 0) {
+      return errors.join(". ");
+    }
+
+    return JSON.stringify(payload);
+  }
+
+  return "Validation failed";
+}
+
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {},
@@ -32,20 +63,14 @@ async function apiRequest<T>(
       try {
         const errorData: ApiResponse<any> = await response.json();
         if (errorData.status === "failure" || errorData.status === "Validation failed") {
-          if (typeof errorData.payload === "string") {
-            errorMessage = errorData.payload;
-          } else if (errorData.payload && typeof errorData.payload === "object" && "message" in errorData.payload) {
-            errorMessage = String(errorData.payload.message);
-          } else {
-            errorMessage = JSON.stringify(errorData.payload);
-          }
+          errorMessage = formatValidationErrors(errorData.payload);
         } else if (errorData.payload) {
           if (typeof errorData.payload === "string") {
             errorMessage = errorData.payload;
           } else if (errorData.payload && typeof errorData.payload === "object" && "message" in errorData.payload) {
             errorMessage = String(errorData.payload.message);
           } else {
-            errorMessage = `Server error: ${response.status}`;
+            errorMessage = formatValidationErrors(errorData.payload);
           }
         }
       } catch (e) {
@@ -65,14 +90,7 @@ async function apiRequest<T>(
   const data: ApiResponse<T> = await response.json();
 
   if (data.status === "failure" || data.status === "Validation failed") {
-    let errorMessage: string;
-    if (typeof data.payload === "string") {
-      errorMessage = data.payload;
-    } else if (data.payload && typeof data.payload === "object" && "message" in data.payload) {
-      errorMessage = String((data.payload as any).message);
-    } else {
-      errorMessage = JSON.stringify(data.payload);
-    }
+    const errorMessage = formatValidationErrors(data.payload);
     throw new Error(errorMessage);
   }
 

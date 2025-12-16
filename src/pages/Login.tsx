@@ -66,7 +66,7 @@ export default function Login({ onSubmit }: LoginPageProps) {
         </div>
 
         <div className={styles.logoWrap} aria-hidden="true">
-          <img src={logo} width={50} height={50}/>
+          <img src={logo} alt="Lumen Logo" className={styles.logo} />
         </div>
 
         <h1 className={styles.title}>Welcome back</h1>
