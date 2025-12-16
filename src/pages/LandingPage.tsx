@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/LandingPage.module.css";
 import Footer from "../components/Footer";
+import ContactModal from "../components/ContactModal";
 import logo from "../assets/lumen-logo.png";
 import bg from "../assets/background.png";
 import { ThemeToggle } from "../components/ThemeToggle";
@@ -54,7 +56,10 @@ const TRUST = [
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  
   const handleLoginClick = () => navigate("/login");
+  const handleBookDemoClick = () => setIsContactModalOpen(true);
 
   return (
     <div className={styles.landingContainer}>
@@ -93,7 +98,9 @@ export const LandingPage = () => {
           <button className={styles.primaryBtn} onClick={handleLoginClick}>
             Start free trial
           </button>
-          <button className={styles.secondaryBtn}>Book a demo</button>
+          <button className={styles.secondaryBtn} onClick={handleBookDemoClick}>
+            Book a demo
+          </button>
         </div>
 
         <div className={styles.trustRow} aria-label="Trust indicators">
@@ -152,11 +159,18 @@ export const LandingPage = () => {
           <button className={styles.ctaBtn} onClick={handleLoginClick}>
             Get started
           </button>
-          <button className={styles.ctaBtnSecondary}>Talk to sales</button>
+          <button className={styles.ctaBtnSecondary} onClick={handleBookDemoClick}>
+            Talk to sales
+          </button>
         </div>
       </section>
 
       <Footer />
+
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </div>
   );
 };

@@ -2,7 +2,8 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
   margin-left: 249px;
   background-color: var(--color-bg);
 }
@@ -14,6 +15,7 @@
   background-color: var(--color-bg);
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .chatShell {
@@ -75,7 +77,292 @@
   border: 1px solid color-mix(in srgb, var(--color-btn) 24%, transparent);
 }
 
+/* Quick Questions */
+.quickQuestions {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+.quickQuestionsTitle {
+  margin: 0 0 12px 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-prm-txt);
+}
+
+.quickQuestionsButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quickQuestionBtn {
+  padding: 12px 16px;
+  background: var(--color-bg);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-prm-txt);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.quickQuestionBtn:hover {
+  background: color-mix(in srgb, var(--color-btn) 8%, transparent);
+  border-color: color-mix(in srgb, var(--color-btn) 30%, transparent);
+  transform: translateY(-1px);
+}
+
+.quickQuestionBtn:active {
+  transform: translateY(0);
+}
+
+/* states */
+.stateCard {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 18px;
+  max-width: 720px;
+}
+
+.stateText {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--color-sec-txt);
+}
+
 /* messages */
 .messagesArea {
   flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--color-bg);
+  position: relative;
+}
+
+/* WhatsApp-like background pattern */
+.messagesArea::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.03;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(0, 0, 0, 0.1) 10px,
+      rgba(0, 0, 0, 0.1) 20px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.messagesArea > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 40px;
+}
+
+.emptyTitle {
+  margin: 0 0 8px 0;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-prm-txt);
+}
+
+.emptyText {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-sec-txt);
+}
+
+/* Message rows */
+.messageRow {
+  display: flex;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.rowUser {
+  justify-content: flex-end;
+}
+
+.rowAI {
+  justify-content: flex-start;
+}
+
+/* Message bubbles */
+.messageBubble {
+  max-width: 65%;
+  padding: 8px 12px;
+  border-radius: 7.5px;
+  word-wrap: break-word;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* User bubble (right side - like WhatsApp sent messages) */
+.userBubble {
+  background: #dcf8c6; /* WhatsApp green */
+  border-bottom-right-radius: 4px;
+  margin-right: 0;
+}
+
+/* AI bubble (left side - like WhatsApp received messages) */
+.aiBubble {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 12%, transparent);
+  border-bottom-left-radius: 4px;
+  margin-left: 0;
+}
+
+.messageText {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14.2px;
+  line-height: 1.4;
+  color: var(--color-prm-txt);
+  white-space: pre-wrap;
+}
+
+.userBubble .messageText {
+  color: #111b21;
+}
+
+.aiBubble .messageText {
+  color: var(--color-prm-txt);
+}
+
+/* Input bar */
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: var(--color-prm-txt);
+  padding: 8px 12px;
+}
+
+.input::placeholder {
+  color: var(--color-sec-txt);
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--color-btn);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sendButton:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sendButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Typing indicator (WhatsApp style) */
+.typingBubble {
+  padding: 12px 16px;
+  min-width: 50px;
+}
+
+.typingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+}
+
+.typingIndicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-sec-txt);
+  display: inline-block;
+  animation: typing 1.4s infinite ease-in-out;
+  opacity: 0.4;
+}
+
+.typingIndicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typingIndicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typingIndicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
 }

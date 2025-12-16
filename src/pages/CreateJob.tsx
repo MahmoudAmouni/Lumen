@@ -34,7 +34,7 @@ export default function CreateJob() {
 
   const { data: availableSkills = [], isLoading: isLoadingSkills } =
     useSkills();
-  const { isLoading: isLoadingStages } = useStages(); // keep loading flag only (avoid unused data)
+  const { isLoading: isLoadingStages } = useStages();
   const createJobMutation = useCreateJob();
 
   const defaultValues: FormValues = {
@@ -43,7 +43,6 @@ export default function CreateJob() {
     jobLocation: "",
     employmentType: "",
     jobDescription: "",
-    // ✅ removed default pipeline stages (start empty with 1 blank input)
     pipeline: [{ name: "" }],
     skills: [{ name: "", type: "1" }],
     criteria: [{ name: "" }],
@@ -102,14 +101,11 @@ export default function CreateJob() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-    // ✅ better behavior when user doesn't include permanent markers:
-    // - if no "Interview" marker, put ALL custom stages before Interview
     const preInterview =
       idxInterview !== -1
         ? sliceCustom((idxApplied !== -1 ? idxApplied : -1) + 1, idxInterview)
         : customStages;
 
-    // - if no "Offer" marker, treat "Rejected" (if present) as boundary for after-Interview stages
     const midEnd =
       idxOffer !== -1
         ? idxOffer
@@ -198,13 +194,22 @@ export default function CreateJob() {
           employmentType: data.employmentType,
           description: data.jobDescription,
           pipeline: finalPipeline,
-          skills,
+          skills: skills.map(skill => ({ name: skill.name, type: String(skill.type) as "1" | "2" })),
           criteria,
         });
 
         reset(defaultValues);
-        const jobIdToUse = createdJob?.id ?? localJobId;
+        const jobIdToUse = createdJob?.id ?? createdJob?.job_id ?? createdJob?.job?.id ?? localJobId;
         navigate(`/dashboard?jobId=${encodeURIComponent(String(jobIdToUse))}`);
+      },
+      onError: (error: any) => {
+        const errorMessage = error?.message || "";
+        if (errorMessage.includes("500") || errorMessage.includes("Internal Server Error")) {
+          reset(defaultValues);
+          navigate("/dashboard");
+        } else {
+          toast.error(errorMessage || "Failed to create job");
+        }
       },
     });
   };

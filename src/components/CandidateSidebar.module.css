@@ -140,6 +140,47 @@
     border-color: color-mix(in srgb, var(--color-btn) 28%, transparent);
 }
 
+.sidebarFooter {
+    margin-top: auto;
+    padding: 10px;
+    border-top: 1px solid color-mix(in srgb, var(--color-prm-txt) 12%, transparent);
+}
+
+.backButton {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+
+    height: 40px;
+    padding: 8px 10px;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13.5px;
+    font-weight: 650;
+    color: color-mix(in srgb, var(--color-prm-txt) 85%, transparent);
+
+    transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+    text-align: left;
+}
+
+.backButton:hover {
+    background: color-mix(in srgb, var(--color-prm-txt) 6%, transparent);
+    transform: translateY(-1px);
+}
+
+.backButton:focus-visible {
+    outline: none;
+    border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
+}
+
 /* responsive */
 @media (max-width: 768px) {
     .sidebar {
@@ -162,5 +203,10 @@
 
     .active::before {
         left: -8px;
+    }
+
+    .backButton {
+        justify-content: center;
+        padding: 10px;
     }
 }

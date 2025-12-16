@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { candidateAPI } from "../services/api";
 import { parseExcelFile } from "../utils/excelParser";
 
@@ -6,7 +7,7 @@ export const useBulkImportCandidates = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ file, jobId }: { file: File; jobId: string }) => {
+    mutationFn: ({ file, jobId }: { file: File; jobId: string }) => {
       if (!jobId) {
         throw new Error("Please select a job first");
       }
@@ -16,28 +17,29 @@ export const useBulkImportCandidates = () => {
         throw new Error("Please log in again");
       }
 
-      // Parse the Excel file
-      const candidates = await parseExcelFile(file);
-
-      // Call the bulk import API
-      return candidateAPI.bulkImportCandidates({
-        jobId,
-        recruiterId,
-        candidates,
-      });
+      return parseExcelFile(file).then((candidates) =>
+        candidateAPI.bulkImportCandidates({
+          jobId,
+          recruiterId,
+          candidates,
+        })
+      );
     },
-    onSuccess: async (_, variables) => {
-      // Invalidate and refetch all candidate queries for this job
+    onSuccess: (_, variables) => {
+      toast.success("Candidates imported successfully");
       if (variables.jobId) {
         const jobIdStr = String(variables.jobId);
-        await queryClient.invalidateQueries({
+        queryClient.invalidateQueries({
           queryKey: ["candidates", jobIdStr],
           exact: false,
         });
-        await queryClient.refetchQueries({
+        queryClient.refetchQueries({
           queryKey: ["candidates", jobIdStr],
         });
       }
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to import candidates. Please try again.");
     },
   });
 };

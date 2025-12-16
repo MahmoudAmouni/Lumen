@@ -17,17 +17,13 @@ export const useLogin = () => {
   const navigate = useNavigate();
 
   return useMutation<LoginSuccess, Error, LoginFormValues>({
-    mutationFn: async ({ email, password }: LoginFormValues) => {
-      return authAPI.login(email, password);
-    },
+    mutationFn: ({ email, password }: LoginFormValues) => authAPI.login(email, password),
     onSuccess: (response) => {
-      // Check if response and user exist
       if (!response || !response.user) {
         toast.error("Invalid login response. Please try again.");
         return;
       }
 
-      // Store user data in localStorage
       localStorage.setItem("user_id", String(response.user.id || ""));
       localStorage.setItem("company_id", String(response.user.company_id || ""));
       localStorage.setItem("user_name", response.user.name || "");
@@ -35,7 +31,6 @@ export const useLogin = () => {
       
       toast.success("Login successful!");
       
-      // Check if user is admin (type_id === 1 or userType.name === "Admin")
       const isAdmin = 
         response.user.type_id === 1 || 
         response.user.userType?.id === 1 ||
@@ -48,7 +43,7 @@ export const useLogin = () => {
       }
     },
     onError: (error: any) => {
-      const message = error?.message || "Login failed. Please check your credentials.";
+      const message = error?.message || "Login failed. Please check your credentials and try again.";
       toast.error(message);
     },
   });

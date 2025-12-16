@@ -8,10 +8,20 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-    const [isDark, setIsDark] = useState(false);
+    // Default to dark mode, but check localStorage first
+    const [isDark, setIsDark] = useState(() => {
+        const saved = localStorage.getItem("theme");
+        if (saved) {
+            return saved === "dark";
+        }
+        // Default to dark mode
+        return true;
+    });
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+        // Save theme preference to localStorage
+        localStorage.setItem("theme", isDark ? "dark" : "light");
     }, [isDark]);
 
     const toggleTheme = () => {
