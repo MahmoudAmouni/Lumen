@@ -1,95 +1,62 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQueries } from "@tanstack/react-query";
 import { FiPlus } from "react-icons/fi";
-import ClipLoader from "react-spinners/ClipLoader";
-
 import Header from "../components/Header";
 import Sidebar from "../components/SiderBar";
-import JobItem from "../components/JobItem";
-import SelectField from "../components/SelectField";
-import SearchField from "../components/SearchField";
-
+import JobItem from "../components/JobItem"; 
 import styles from "../styles/JobList.module.css";
-import { useJobsByCompany } from "../hooks/useJobsByCompany";
-import { fetchCandidatesByJobAndStage } from "../api/candidate.api";
+import { useData } from "../context/DataContext";
 
 export default function JobList() {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+    const navigate = useNavigate();
+    const { jobs, getAllCandidatesForJob } = useData();
+    const [searchTerm, setSearchTerm] = useState("");
 
-  const companyId =
-    typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
-
-  const { data: jobs = [], isLoading } = useJobsByCompany(companyId);
-
-  const handleAddRole = () => navigate("/createJob");
-  const handleJobClick = (jobId: string) =>
-    navigate(`/jobs/${encodeURIComponent(jobId)}`);
-
-  const filteredJobs = jobs.filter((job: any) => {
-    const q = searchTerm.toLowerCase();
-    const matchesSearch =
-      job.title.toLowerCase().includes(q) ||
-      job.location.toLowerCase().includes(q) ||
-      job.employmentType.toLowerCase().includes(q);
-
-    const matchesStatus =
-      statusFilter === "all" ? true : (job.status || "open") === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  const candidatesQueries = useQueries({
-    queries: filteredJobs.map((job: any) => ({
-      queryKey: ["candidates", job.id],
-      queryFn: () => fetchCandidatesByJobAndStage(job.id),
-      enabled: !!job.id,
-    })),
-  });
-
-  const candidatesByJobMap = useMemo(() => {
-    const map: Record<string, any[]> = {};
-    filteredJobs.forEach((job: any, index: number) => {
-      map[job.id] = candidatesQueries[index]?.data || [];
-    });
-    return map;
-  }, [filteredJobs, candidatesQueries]);
-
-  const jobsWithStats = filteredJobs.map((job: any) => {
-    const allCandidates = candidatesByJobMap[job.id] || [];
-
-    const appliedCount = allCandidates.filter(
-      (c) => c.stage?.toLowerCase() === "applied"
-    ).length;
-
-    const hiredCount = allCandidates.filter((c) => {
-      const s = c.stage?.toLowerCase();
-      return s === "hired" || s === "offer";
-    }).length;
-
-    const inReviewCount = allCandidates.filter((c) => {
-      const s = c.stage?.toLowerCase();
-      return (
-        s !== "applied" && s !== "hired" && s !== "offer" && s !== "rejected"
-      );
-    }).length;
-
-    const jobType = `${
-      job.employmentType.charAt(0).toUpperCase() + job.employmentType.slice(1)
-    } • ${job.location}`;
-
-    return {
-      ...job,
-      jobType,
-      stats: {
-        applied: appliedCount,
-        hired: hiredCount,
-        inReview: inReviewCount,
-      },
+    const handleAddRole = () => {
+        navigate("/createJob");
     };
-  });
+
+    const handleJobClick = (jobId: string) => {
+        navigate(`/dashboard?jobId=${encodeURIComponent(jobId)}`);
+    };
+
+    // Filter jobs by search term
+    const filteredJobs = jobs.filter((job) =>
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.employmentType.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Calculate stats for each job
+    const jobsWithStats = filteredJobs.map((job) => {
+        const allCandidates = getAllCandidatesForJob(job.id);
+        const appliedCount = allCandidates.filter(
+            (c) => c.stage.toLowerCase() === "applied"
+        ).length;
+        const hiredCount = allCandidates.filter(
+            (c) => c.stage.toLowerCase() === "hired" || c.stage.toLowerCase() === "offer"
+        ).length;
+        const inReviewCount = allCandidates.filter(
+            (c) => 
+                c.stage.toLowerCase() !== "applied" &&
+                c.stage.toLowerCase() !== "hired" &&
+                c.stage.toLowerCase() !== "offer" &&
+                c.stage.toLowerCase() !== "rejected"
+        ).length;
+
+        // Format job type: "Full-time • Remote"
+        const jobType = `${job.employmentType.charAt(0).toUpperCase() + job.employmentType.slice(1)} • ${job.location}`;
+
+        return {
+            ...job,
+            jobType,
+            stats: {
+                applied: appliedCount,
+                hired: hiredCount,
+                inReview: inReviewCount,
+            },
+        };
+    });
 
   return (
     <>
@@ -101,56 +68,42 @@ export default function JobList() {
         <div className={styles.pageContent}>
           <div className={styles.pageHeader}>
             <h2 className={styles.pageTitle}>Job Roles</h2>
-
-            <button
-              className={styles.addRoleBtn}
-              onClick={handleAddRole}
-              type="button"
-            >
+            <button className={styles.addRoleBtn} onClick={handleAddRole}>
               <FiPlus size={16} />
               <span>Add Role</span>
             </button>
           </div>
 
           <div className={styles.searchFilterContainer}>
-            <SearchField
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder="Search roles..."
-            />
-
-            <SelectField
-              id="statusFilter"
-              label="Filter by status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
-              <option value="draft">Draft</option>
-              <option value="paused">Paused</option>
-            </SelectField>
+            <div className={styles.searchBox}>
+              <span className={styles.searchIcon}>🔍</span>
+              <input
+                type="text"
+                placeholder="Search roles..."
+                className={styles.searchInput}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className={styles.filterBox}>
+              <span className={styles.filterLabel}>Filter by status</span>
+              <span className={styles.filterIcon}>▼</span>
+            </div>
           </div>
 
-          {isLoading ? (
+          {jobsWithStats.length === 0 ? (
             <div className={styles.noJobs}>
-              <ClipLoader size={40} color={"var(--color-btn)"} />
-            </div>
-          ) : jobsWithStats.length === 0 ? (
-            <div className={styles.noJobs}>
-              {searchTerm || statusFilter !== "all"
-                ? "No jobs found matching your filters."
+              {searchTerm
+                ? "No jobs found matching your search."
                 : "No jobs created yet. Click 'Add Role' to create your first job posting."}
             </div>
           ) : (
             <div className={styles.jobCardsGrid}>
-              {jobsWithStats.map((job: any) => (
-                <button
+              {jobsWithStats.map((job) => (
+                <div
                   key={job.id}
-                  type="button"
-                  className={styles.jobCardLink}
                   onClick={() => handleJobClick(job.id)}
+                  style={{ cursor: "pointer" }}
                 >
                   <JobItem
                     title={job.title}
@@ -158,7 +111,7 @@ export default function JobList() {
                     status={job.status || "open"}
                     stats={job.stats}
                   />
-                </button>
+                </div>
               ))}
             </div>
           )}

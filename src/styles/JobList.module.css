@@ -1,18 +1,26 @@
+
+.body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-prm-txt);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
 .main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     height: 100vh;
-
-    /* keep your layout; just make it consistent with sidebar width */
-    margin-left: 260px;
+    margin-left: 250px;
 }
 
 .pageContent {
     padding: 20px;
     flex-grow: 1;
     overflow-y: auto;
-    background-color: var(--color-bg);
 }
 
 .pageHeader {
@@ -25,30 +33,24 @@
 .pageTitle {
     font-size: 28px;
     font-weight: 600;
-    color: var(--color-prm-txt);
 }
 
 .addRoleBtn {
     background-color: var(--color-btn);
     color: var(--btn-txt);
-    border: 1px solid color-mix(in srgb, var(--color-btn) 70%, transparent);
-
+    border: none;
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
-
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
-
-    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    transition: background-color 0.2s ease;
 }
 
 .addRoleBtn:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
-    box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+    background-color: rgba(96, 165, 250, 0.9);
 }
 
 .searchFilterContainer {
@@ -57,36 +59,132 @@
     margin-bottom: 20px;
 }
 
+.searchBox {
+    flex-grow: 1;
+    background-color: var(--color-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.searchIcon {
+    color: var(--color-sec-txt);
+}
+
+.searchInput {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-prm-txt);
+    font-size: 16px;
+    width: 100%;
+}
+
+.filterBox {
+    width: 250px;
+    background-color: var(--color-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.filterLabel {
+    font-weight: 500;
+}
+
+.filterIcon {
+    color: var(--color-sec-txt);
+}
+
 .jobCardsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
 
-/* wrapper button for card (replaces inline cursor style) */
-.jobCardLink {
-    padding: 0;
-    border: none;
-    background: transparent;
-    text-align: left;
-    cursor: pointer;
-    width: 100%;
-}
-
-.jobCardLink:focus-visible {
-    outline: none;
+.jobCard {
+    background-color: var(--color-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
+    padding: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* empty/loading */
+.jobCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.jobTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.jobType {
+    color: var(--color-sec-txt);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.jobStatus {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.statusOpen {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid #10b981;
+}
+
+.statusClose {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+.jobStats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.statValue {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.statLabel {
+    color: var(--color-sec-txt);
+    font-size: 12px;
+}
+
 .noJobs {
     padding: 40px;
     text-align: center;
     color: var(--color-sec-txt);
     font-size: 16px;
     background-color: var(--color-card);
-    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
     border-radius: 8px;
     margin-top: 20px;
 }
@@ -98,5 +196,9 @@
 
     .searchFilterContainer {
         flex-direction: column;
+    }
+
+    .filterBox {
+        width: 100%;
     }
 }

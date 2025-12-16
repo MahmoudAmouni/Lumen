@@ -1,30 +1,48 @@
-import styles from "../styles/Footer.module.css";
+import styles from "./Footer.module.css";
 import logo from "../assets/lumen-logo.png";
+import { FaFacebook, FaInstagram, FaTiktok, FaSnapchat } from "react-icons/fa";
 
-export const Footer = () => {
+export default function Footer() {
     return (
-        <footer className={styles.footerContainer}>
-            <div className={styles.footerLeft}>
-                <div className={styles.footerLogoSection}>
-                    <img src={logo} className={styles.footerLogoImg} alt="Lumen Logo" />
-                    <span className={styles.footerLogoText}>Lumen</span>
+        <div className={styles.footerWrapper}>
+            <footer className={styles.footerContainer}>
+                <div className={styles.footerContent}>
+                    <div className={styles.footerLeft}>
+                        <div className={styles.footerLogoSection}>
+                            <img
+                                src={logo}
+                                alt="Lumen Logo"
+                                className={styles.footerLogoImg}
+                            />
+                            <span className={styles.footerLogoText}>Lumen</span>
+                        </div>
+                    </div>
+
+                    <div className={styles.footerCenter}>
+                        <p className={styles.footerCopy}>
+                            © 2025 Lumen. Built with care for mindful households.
+                        </p>
+                    </div>
+
+                    <div className={styles.footerRight}>
+                        <h4 className={styles.socialTitle}>Social Links</h4>
+                        <div className={styles.socialIcons}>
+                            <a href="#" className={styles.socialIcon} aria-label="Facebook">
+                                <FaFacebook />
+                            </a>
+                            <a href="#" className={styles.socialIcon} aria-label="Instagram">
+                                <FaInstagram />
+                            </a>
+                            <a href="#" className={styles.socialIcon} aria-label="TikTok">
+                                <FaTiktok />
+                            </a>
+                            <a href="#" className={styles.socialIcon} aria-label="Snapchat">
+                                <FaSnapchat />
+                            </a>
+                        </div>
+                    </div>
                 </div>
-
-                <p className={styles.footerCopy}>
-                    © 2025 Vesta. Built with care for mindful households.
-                </p>
-            </div>
-
-            <div className={styles.footerRight}>
-                <h4>Social Links</h4>
-
-                <div className={styles.socialIcons}>
-                    <i className="fab fa-facebook"></i>
-                    <i className="fab fa-instagram"></i>
-                    <i className="fab fa-tiktok"></i>
-                    <i className="fab fa-snapchat"></i>
-                </div>
-            </div>
-        </footer>
+            </footer>
+        </div>
     );
-};
+}

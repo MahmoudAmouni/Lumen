@@ -1,23 +1,4 @@
-/* DEFAULT = DARK */
-:root {
-    --color-header: #111827;
-    --header-btn: #334053;
-    --color-btn: #60a5fa;
-
-    --color-bg: #111827;
-    --color-sidebar: #1f2937;
-
-    --color-prm-txt: #f9fafb;
-    --color-sec-txt: #d1d5db;
-
-    --color-card: #1f2937;
-    --btn-txt: #ffffff;
-
-    --cta-bg: #070d1b;
-}
-
-/* LIGHT (only when data-theme="light") */
-:root[data-theme="light"] {
+:root  {
     --color-header: #f3f4f6;
     --header-btn: #e5ecf6;
     --color-btn: #4a90e2;
@@ -30,8 +11,21 @@
 
     --color-card: #ffffff;
     --btn-txt: #ffffff;
-
     --cta-bg: #e5ecf6;
+}
+
+:root[data-theme="light"] {
+    --color-header: #111827;
+    --header-btn: #60a5fa;
+    --color-btn: #60a5fa;
+    --color-bg: #111827;
+    --color-sidebar: #1f2937;
+    --color-prm-txt: #f9fafb;
+    --color-sec-txt: #d1d5db;
+    --color-card: #1f2937;
+    --btn-txt: #ffffff;
+    --cta-bg: #070d1b;
+    
 }
 
 html {
