@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { FiAlertTriangle } from "react-icons/fi";
 import styles from "./ConfirmModal.module.css";
 
@@ -22,17 +24,44 @@ export default function ConfirmModal({
   onCancel,
   variant = "danger",
 }: ConfirmModalProps) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  return (
-    <div className={styles.overlay} onClick={onCancel}>
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onCancel();
+    } else if (e.key === "Enter") {
+      onConfirm();
+    }
+  };
+
+  return createPortal(
+    <div
+      className={styles.overlay}
+      onClick={onCancel}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-title"
+      aria-describedby="confirm-message"
+    >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.iconWrapper}>
           <FiAlertTriangle className={`${styles.icon} ${styles[variant]}`} />
         </div>
 
-        <h3 className={styles.title}>{title}</h3>
-        <p className={styles.message}>{message}</p>
+        <h3 id="confirm-title" className={styles.title}>{title}</h3>
+        <p id="confirm-message" className={styles.message}>{message}</p>
 
         <div className={styles.actions}>
           <button
@@ -46,12 +75,14 @@ export default function ConfirmModal({
             type="button"
             className={`${styles.confirmButton} ${styles[variant]}`}
             onClick={onConfirm}
+            autoFocus
           >
             {confirmText}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

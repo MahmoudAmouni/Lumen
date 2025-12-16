@@ -1,13 +1,14 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: color-mix(in srgb, var(--color-bg) 50%, #000);
-  backdrop-filter: blur(4px);
+  background: color-mix(in srgb, #000 60%, transparent);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 9999;
   padding: 20px;
+  animation: fadeIn 0.15s ease-out;
 }
 
 .modal {
@@ -17,8 +18,18 @@
   padding: 32px;
   max-width: 420px;
   width: 100%;
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--color-prm-txt) 30%, transparent);
+  box-shadow: 0 24px 60px color-mix(in srgb, #000 50%, transparent);
   animation: slideIn 0.2s ease-out;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
@@ -79,6 +90,7 @@
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  margin-top: 8px;
 }
 
 .cancelButton,
@@ -104,6 +116,12 @@
   transform: translateY(-1px);
 }
 
+.cancelButton:focus-visible {
+  outline: none;
+  border-color: var(--color-btn);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-btn) 20%, transparent);
+}
+
 .confirmButton {
   color: var(--btn-txt);
 }
@@ -117,6 +135,11 @@
   background: #f87171;
   box-shadow: 0 8px 24px color-mix(in srgb, #f97373 35%, transparent);
   transform: translateY(-1px);
+}
+
+.confirmButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-btn) 30%, transparent);
 }
 
 .confirmButton.warning {

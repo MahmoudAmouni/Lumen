@@ -23,7 +23,7 @@ export const useCreateJob = () => {
           queryClient.invalidateQueries({ queryKey: ["jobs", companyId] });
         }
       } else {
-        toast.error(message);
+      toast.error(message);
       }
     },
   });
