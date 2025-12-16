@@ -1,0 +1,89 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: var(--color-sidebar);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    transition: width 0.3s ease;
+}
+
+.sidebarHeader {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+    background-color: var(--header-btn);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.logoText {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.navMenu {
+    padding: 20px 0;
+    flex-grow: 1;
+}
+
+.navItem {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.navItem:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.navItem.active {
+    background-color: var(--color-btn);
+    color: var(--btn-txt);
+    border-left-color: var(--btn-txt);
+}
+
+.navIcon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+
+    .logoText {
+        display: none;
+    }
+
+    .navItem span {
+        display: none;
+    }
+
+    .navItem {
+        justify-content: center;
+    }
+}

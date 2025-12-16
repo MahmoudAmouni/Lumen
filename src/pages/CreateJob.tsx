@@ -1,14 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import ClipLoader from "react-spinners/ClipLoader";
 import DynamicSection from "../components/DynamicSection";
 import Header from "../components/Header";
 import Sidebar from "../components/SiderBar";
 import styles from "../styles/CreateJob.module.css";
 import { useData } from "../context/DataContext";
-import { useSkills } from "../hooks/useSkills";
-import { useStages } from "../hooks/useStages";
-import { useCreateJob } from "../hooks/useCreateJob";
 
 import {
   useFieldArray as UseFieldArray,
@@ -26,29 +21,25 @@ interface FormValues {
   criteria: { name: string }[];
 }
 
-const PERMANENT = ["Applied", "Interview", "Offer", "Rejected"];
-
 export default function CreateJob() {
   const navigate = useNavigate();
   const { addJob } = useData();
-
-  const { data: availableSkills = [], isLoading: isLoadingSkills } =
-    useSkills();
-  const { isLoading: isLoadingStages } = useStages(); // keep loading flag only (avoid unused data)
-  const createJobMutation = useCreateJob();
-
+  
   const defaultValues: FormValues = {
     jobTitle: "",
     jobLevel: "",
     jobLocation: "",
     employmentType: "",
     jobDescription: "",
-    // ✅ removed default pipeline stages (start empty with 1 blank input)
-    pipeline: [{ name: "" }],
+    pipeline: [
+      { name: "Applied" },      // Permanent - First
+      { name: "Interview" },    // Permanent - Middle
+      { name: "Offer" },        // Permanent - Before Last
+      { name: "Rejected" },     // Permanent - Last
+    ],
     skills: [{ name: "", type: "1" }],
     criteria: [{ name: "" }],
   };
-
   const {
     register,
     control,
@@ -56,157 +47,143 @@ export default function CreateJob() {
     reset,
     watch,
     formState: { errors },
-  } = UseForm<FormValues>({ defaultValues });
+  } = UseForm<FormValues>({
+    defaultValues
+  });
 
   const pipelineValues = watch("pipeline");
 
-  const pipelineFieldArray = UseFieldArray({ control, name: "pipeline" });
-  const skillsFieldArray = UseFieldArray({ control, name: "skills" });
-  const criteriaFieldArray = UseFieldArray({ control, name: "criteria" });
+  const pipelineFieldArray = UseFieldArray({
+    control,
+    name: "pipeline",
+  });
+
+  const skillsFieldArray = UseFieldArray({
+    control,
+    name: "skills",
+  });
+
+  const criteriaFieldArray = UseFieldArray({
+    control,
+    name: "criteria",
+  });
 
   const onSubmit = (data: FormValues) => {
-    const rawStages = (data.pipeline || [])
-      .map((s) => s.name?.trim())
-      .filter(Boolean) as string[];
+    // Filter out empty pipeline stages
+    const allStages = data.pipeline
+      .filter((stage) => stage.name.trim() !== "")
+      .map((stage) => stage.name.trim());
 
-    const allStages = rawStages;
-
-    const lower = (s: string) => s.toLowerCase();
-    const isPermanent = (name: string) =>
-      PERMANENT.some((p) => lower(p) === lower(name));
-
-    const customStages = allStages.filter((s) => !isPermanent(s));
-
-    const idxApplied = allStages.findIndex((s) => lower(s) === "applied");
-    const idxInterview = allStages.findIndex((s) => lower(s) === "interview");
-    const idxOffer = allStages.findIndex((s) => lower(s) === "offer");
-    const idxRejected = allStages.findIndex((s) => lower(s) === "rejected");
-
-    const unique = (arr: string[]) => {
-      const seen = new Set<string>();
-      const out: string[] = [];
-      for (const s of arr) {
-        const key = lower(s);
-        if (!seen.has(key)) {
-          seen.add(key);
-          out.push(s);
-        }
-      }
-      return out;
+    // Permanent stages that must always be present
+    const permanentStages = ["Applied", "Interview", "Offer", "Rejected"];
+    
+    // Separate permanent stages from custom stages
+    const customStages: string[] = [];
+    const foundPermanent: { [key: string]: boolean } = {
+      Applied: false,
+      Interview: false,
+      Offer: false,
+      Rejected: false,
     };
 
-    const sliceCustom = (start: number, end: number) =>
-      allStages
-        .slice(start, end)
-        .filter((s) => !isPermanent(s))
-        .map((s) => s.trim())
-        .filter(Boolean);
+    // Categorize stages
+    allStages.forEach((stageName) => {
+      const isPermanent = permanentStages.some(
+        (p) => p.toLowerCase() === stageName.toLowerCase()
+      );
+      if (isPermanent) {
+        // Mark which permanent stage it is (case-insensitive)
+        if (stageName.toLowerCase() === "applied") foundPermanent.Applied = true;
+        else if (stageName.toLowerCase() === "interview") foundPermanent.Interview = true;
+        else if (stageName.toLowerCase() === "offer") foundPermanent.Offer = true;
+        else if (stageName.toLowerCase() === "rejected") foundPermanent.Rejected = true;
+      } else {
+        customStages.push(stageName);
+      }
+    });
 
-    // ✅ better behavior when user doesn't include permanent markers:
-    // - if no "Interview" marker, put ALL custom stages before Interview
-    const preInterview =
-      idxInterview !== -1
-        ? sliceCustom((idxApplied !== -1 ? idxApplied : -1) + 1, idxInterview)
-        : customStages;
+    // Build final pipeline maintaining order: Applied (first), custom stages, Interview, more custom, Offer, more custom, Rejected (last)
+    const finalPipeline: { name: string; order: number }[] = [];
+    let order = 0;
 
-    // - if no "Offer" marker, treat "Rejected" (if present) as boundary for after-Interview stages
-    const midEnd =
-      idxOffer !== -1
-        ? idxOffer
-        : idxRejected !== -1
-        ? idxRejected
-        : allStages.length;
+    // Always start with Applied
+    finalPipeline.push({ name: "Applied", order: order++ });
 
-    const betweenInterviewAndOffer =
-      idxInterview !== -1 ? sliceCustom(idxInterview + 1, midEnd) : [];
+    // Add custom stages that appear before Interview
+    const appliedIndex = allStages.findIndex((s) => s.toLowerCase() === "applied");
+    const interviewIndex = allStages.findIndex((s) => s.toLowerCase() === "interview");
+    
+    if (appliedIndex !== -1 && interviewIndex !== -1 && interviewIndex > appliedIndex) {
+      allStages.slice(appliedIndex + 1, interviewIndex).forEach((stage) => {
+        if (!permanentStages.some((p) => p.toLowerCase() === stage.toLowerCase())) {
+          finalPipeline.push({ name: stage, order: order++ });
+        }
+      });
+    }
 
-    const betweenOfferAndRejected =
-      idxOffer !== -1
-        ? sliceCustom(
-            idxOffer + 1,
-            idxRejected !== -1 ? idxRejected : allStages.length
-          )
-        : [];
+    // Add Interview
+    finalPipeline.push({ name: "Interview", order: order++ });
 
-    const placed = new Set<string>(
-      [
-        ...preInterview,
-        ...betweenInterviewAndOffer,
-        ...betweenOfferAndRejected,
-      ].map(lower)
-    );
+    // Add custom stages between Interview and Offer
+    const offerIndex = allStages.findIndex((s) => s.toLowerCase() === "offer");
+    if (interviewIndex !== -1 && offerIndex !== -1 && offerIndex > interviewIndex) {
+      allStages.slice(interviewIndex + 1, offerIndex).forEach((stage) => {
+        if (!permanentStages.some((p) => p.toLowerCase() === stage.toLowerCase())) {
+          finalPipeline.push({ name: stage, order: order++ });
+        }
+      });
+    }
 
-    const remaining = unique(customStages).filter((s) => !placed.has(lower(s)));
+    // Add Offer
+    finalPipeline.push({ name: "Offer", order: order++ });
 
-    const finalOrderNames = unique([
-      "Applied",
-      ...preInterview,
-      "Interview",
-      ...betweenInterviewAndOffer,
-      "Offer",
-      ...betweenOfferAndRejected,
-      ...remaining,
-      "Rejected",
-    ]);
+    // Add custom stages between Offer and Rejected
+    const rejectedIndex = allStages.findIndex((s) => s.toLowerCase() === "rejected");
+    if (offerIndex !== -1 && rejectedIndex !== -1 && rejectedIndex > offerIndex) {
+      allStages.slice(offerIndex + 1, rejectedIndex).forEach((stage) => {
+        if (!permanentStages.some((p) => p.toLowerCase() === stage.toLowerCase())) {
+          finalPipeline.push({ name: stage, order: order++ });
+        }
+      });
+    }
 
-    const finalPipeline = finalOrderNames.map((name, order) => ({
-      name,
-      order,
-    }));
+    // Add any remaining custom stages that weren't placed
+    customStages.forEach((customStage) => {
+      if (!finalPipeline.some((s) => s.name === customStage)) {
+        // Insert before Rejected
+        finalPipeline.push({ name: customStage, order: order++ });
+      }
+    });
 
-    const skills = (data.skills || [])
+    // Always end with Rejected
+    finalPipeline.push({ name: "Rejected", order: order++ });
+
+    // Filter out empty skills and criteria, map type correctly
+    const skills = data.skills
       .filter((skill) => skill.name.trim() !== "")
       .map((skill) => ({
         name: skill.name.trim(),
-        type: Number(skill.type) as 1 | 2,
+        type: skill.type as "1" | "2",
       }));
-
-    const criteria = (data.criteria || []).filter(
+    const criteria = data.criteria.filter(
       (criterion) => criterion.name.trim() !== ""
     );
 
-    const recruiterId = localStorage.getItem("user_id");
-    const companyId = localStorage.getItem("company_id");
-
-    if (!recruiterId || !companyId) {
-      toast.error(
-        "Missing recruiter or company information. Please log in again."
-      );
-      return;
-    }
-
-    const payload = {
-      recruiter_id: Number(recruiterId),
-      company_id: Number(companyId),
-      jobTitle: data.jobTitle,
-      jobLevel: data.jobLevel,
-      jobLocation: data.jobLocation,
+    // Save the job
+    const jobId = addJob({
+      title: data.jobTitle,
+      level: data.jobLevel,
+      location: data.jobLocation,
       employmentType: data.employmentType,
-      jobDescription: data.jobDescription,
-      status: "open",
-      pipeline: finalPipeline.map((stage) => ({ name: stage.name })),
+      description: data.jobDescription,
+      pipeline: finalPipeline,
       skills,
       criteria,
-    };
-
-    createJobMutation.mutate(payload, {
-      onSuccess: (createdJob: any) => {
-        const localJobId = addJob({
-          title: data.jobTitle,
-          level: data.jobLevel,
-          location: data.jobLocation,
-          employmentType: data.employmentType,
-          description: data.jobDescription,
-          pipeline: finalPipeline,
-          skills,
-          criteria,
-        });
-
-        reset(defaultValues);
-        const jobIdToUse = createdJob?.id ?? localJobId;
-        navigate(`/dashboard?jobId=${encodeURIComponent(String(jobIdToUse))}`);
-      },
     });
+
+    // Reset form and navigate to dashboard with the new job selected
+    reset(defaultValues);
+    navigate(`/dashboard?jobId=${encodeURIComponent(jobId)}`);
   };
 
   return (
@@ -218,12 +195,6 @@ export default function CreateJob() {
 
         <div className={styles.pageContent}>
           <h1 className={styles.pageTitle}>Create New Job</h1>
-
-          {(isLoadingSkills || isLoadingStages) && (
-            <div className={styles.loadingBox}>
-              <ClipLoader size={32} color={"var(--color-btn)"} />
-            </div>
-          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
             <section className={styles.section}>
@@ -247,7 +218,6 @@ export default function CreateJob() {
                     </span>
                   )}
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="jobLevel">Job Level:</label>
                   <select
@@ -289,7 +259,6 @@ export default function CreateJob() {
                     </span>
                   )}
                 </div>
-
                 <div className={styles.formGroup}>
                   <label htmlFor="employmentType">Employment Type:</label>
                   <select
@@ -332,23 +301,21 @@ export default function CreateJob() {
               </div>
             </section>
 
-            <p className={styles.helperText}>
-              Note: Applied, Interview, Offer, and Rejected are always included
-              automatically.
-            </p>
-
             <DynamicSection
               title="Pipeline Stages"
               fields={pipelineFieldArray.fields}
               onAdd={() => pipelineFieldArray.append({ name: "" })}
               onRemove={pipelineFieldArray.remove}
-              onMoveUp={(index) =>
-                index > 0 && pipelineFieldArray.move(index, index - 1)
-              }
-              onMoveDown={(index) =>
-                index < pipelineFieldArray.fields.length - 1 &&
-                pipelineFieldArray.move(index, index + 1)
-              }
+              onMoveUp={(index) => {
+                if (index > 0) {
+                  pipelineFieldArray.move(index, index - 1);
+                }
+              }}
+              onMoveDown={(index) => {
+                if (index < pipelineFieldArray.fields.length - 1) {
+                  pipelineFieldArray.move(index, index + 1);
+                }
+              }}
               register={register}
               errors={errors.pipeline as any}
               fieldName="pipeline"
@@ -358,13 +325,13 @@ export default function CreateJob() {
             <DynamicSection
               title="Required Skills"
               fields={skillsFieldArray.fields}
-              onAdd={() => skillsFieldArray.append({ name: "", type: "1" })}
+              onAdd={() =>
+                skillsFieldArray.append({ name: "", type: "1" })
+              }
               onRemove={skillsFieldArray.remove}
               register={register}
               errors={errors.skills as any}
               fieldName="skills"
-              availableOptions={availableSkills}
-              isLoadingOptions={isLoadingSkills}
             />
 
             <DynamicSection
