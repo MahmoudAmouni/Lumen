@@ -16,6 +16,7 @@ export default function Header({ title, actions, centered }: HeaderProps) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // keep your current behavior
     navigate("/");
   };
 
@@ -26,17 +27,27 @@ export default function Header({ title, actions, centered }: HeaderProps) {
       ) : (
         <div className={styles.headerTitle}>{title}</div>
       )}
+
       <div className={styles.headerActions}>
         <button
           className={styles.themeToggle}
           onClick={toggleTheme}
           aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          type="button"
         >
-          {!isDark ? <FaSun size={18} color="white"/> : <FaMoon size={18} color="black" />}
+          {isDark ? <FaMoon /> : <FaSun />}
         </button>
+
         {actions}
-        <button className={styles.logoutBtn} onClick={handleLogout} aria-label="Logout">
-          Logout
+
+        <button
+          className={styles.logoutBtn}
+          onClick={handleLogout}
+          aria-label="Logout"
+          type="button"
+        >
+          <MdLogout className={styles.logoutIcon} />
+          <span className={styles.logoutText}>Logout</span>
         </button>
       </div>
     </header>

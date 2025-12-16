@@ -14,24 +14,26 @@ export async function fetchCandidatesByJobAndStage(
   console.log("fetchCandidatesByJobAndStage - jobId:", jobId, "stage:", normalizedStage, "results:", apiCandidates.length);
   console.log("API candidates returned:", apiCandidates);
 
-  return apiCandidates.map((c: any) => ({
-    id: String(c.id),
-    name: c.name,
-    email: c.email,
-    // Normalize stage to lowercase for consistent filtering
-    stage: c.stage ? c.stage.toLowerCase() : (stage ? stage.toLowerCase() : "applied"),
-    jobId: String(c.job_id || c.jobId || jobId),
-    age: c.age,
-    location: c.location,
-    level: c.level,
-    linkedin: c.linkedin,
-    github: c.github,
-    phone: c.phone,
-    recruiter: c.recruiter,
-    recruiterEmail: c.recruiterEmail,
-    internalNotes: c.internalNotes,
-    appliedDate: c.appliedDate,
-  }));
+  return apiCandidates
+    .filter((c: any) => c && c.id) // Filter out any invalid candidates
+    .map((c: any) => ({
+      id: String(c.id || ""),
+      name: c.name || "",
+      email: c.email || "",
+      // Normalize stage to lowercase for consistent filtering
+      stage: c.stage ? c.stage.toLowerCase() : (stage ? stage.toLowerCase() : "applied"),
+      jobId: String(c.job_id || c.jobId || jobId),
+      age: c.age,
+      location: c.location,
+      level: c.level,
+      linkedin: c.linkedin,
+      github: c.github,
+      phone: c.phone,
+      recruiter: c.recruiter,
+      recruiterEmail: c.recruiterEmail,
+      internalNotes: c.internalNotes,
+      appliedDate: c.appliedDate,
+    }));
 }
 
 // Fetch a single candidate profile
@@ -41,10 +43,14 @@ export async function fetchCandidateProfile(
 ): Promise<Candidate> {
   const profile: any = await candidateAPI.getCandidateProfile(candidateId, jobId);
 
+  if (!profile || !profile.id) {
+    throw new Error("Candidate profile not found or invalid");
+  }
+
   return {
-    id: String(profile.id),
-    name: profile.name,
-    email: profile.email,
+    id: String(profile.id || ""),
+    name: profile.name || "",
+    email: profile.email || "",
     stage: profile.stage || "Applied",
     jobId: String(profile.jobId || jobId || ""),
     age: profile.age,

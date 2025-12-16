@@ -1,129 +1,169 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import CandidateSidebar from "../components/CandidateSidebar";
 import styles from "../styles/InterviewNotes.module.css";
+import { useCandidateProfile } from "../hooks/useCandidateProfile";
+import { useUpdateInterviewNotes } from "../hooks/useUpdateInterviewNotes";
+import { useJobsByCompany } from "../hooks/useJobsByCompany";
 import { useData } from "../context/DataContext";
 
 export default function InterviewNotes() {
   const [searchParams] = useSearchParams();
   const candidateId = searchParams.get("candidateId");
   const jobId = searchParams.get("jobId");
-  
-  const { candidates, jobs, updateCandidateInterviewNotes } = useData();
-  const candidate = candidates.find((c) => c.id === candidateId);
-  const job = jobs.find((j) => j.id === jobId || j.id === candidate?.jobId);
-  
+
+  const companyId =
+    typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
+
+  useJobsByCompany(companyId);
+  const { jobs } = useData();
+
+  const { data: candidate, isLoading } = useCandidateProfile(
+    candidateId,
+    jobId
+  );
+  const updateNotesMutation = useUpdateInterviewNotes();
+
+  const job = useMemo(() => {
+    if (!jobs?.length) return undefined;
+    return jobs.find((j) => j.id === jobId || j.id === candidate?.jobId);
+  }, [jobs, jobId, candidate?.jobId]);
+
   const [notes, setNotes] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Load existing interview notes if any
-    if (candidate?.interviewNotes) {
-      setNotes(candidate.interviewNotes);
-    }
-  }, [candidate]);
+    setNotes(candidate?.interviewNotes ?? "");
+  }, [candidate?.interviewNotes]);
 
-  const handleSubmit = async () => {
-    if (!notes.trim() || !candidate) return;
-
-    setIsSubmitting(true);
-    
-    // Save notes to candidate
-    updateCandidateInterviewNotes(candidate.id, notes.trim());
-    
-    // Simulate API call
-    setTimeout(() => {
-      // In a real app, this would trigger n8n workflow
-      console.log("Notes submitted:", notes);
-      alert("Notes submitted successfully! n8n will summarize these notes and update the scorecard.");
-      setIsSubmitting(false);
-    }, 1000);
-  };
+  const interviewDate = useMemo(() => {
+    const base = candidate?.appliedDate
+      ? new Date(candidate.appliedDate)
+      : new Date();
+    const scheduled = new Date(base.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return scheduled.toISOString();
+  }, [candidate?.appliedDate]);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "Not scheduled";
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", { 
-        month: "short", 
-        day: "numeric", 
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
         year: "numeric",
         hour: "numeric",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     } catch {
       return dateString;
     }
   };
 
-  // Get interview date from candidate or use a default
-  const interviewDate = candidate?.appliedDate 
-    ? new Date(new Date(candidate.appliedDate).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
-    : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const handleSubmit = () => {
+    if (!candidateId || !jobId) return;
+    const payload = notes.trim();
+    if (!payload) return;
 
-  if (!candidate) {
-    return (
-      <>
-        <CandidateSidebar />
-        <div className={styles.main}>
-          <Header title="Interview Notes" />
-          <div className={styles.pageContent}>
-            <div className={styles.errorMessage}>Candidate not found</div>
-          </div>
-        </div>
-      </>
-    );
-  }
+    updateNotesMutation.mutate({
+      candidateId,
+      jobId,
+      notes: payload,
+    });
+  };
+
+  const showError = !candidateId || !jobId;
 
   return (
     <>
       <CandidateSidebar />
+
       <div className={styles.main}>
         <Header title="Interview Notes" />
+
         <div className={styles.pageContent}>
-          {/* Candidate Information Card */}
-          <div className={styles.candidateInfoCard}>
-            <h2 className={styles.candidateName}>{candidate.name}</h2>
-            <p className={styles.candidateDetail}>{job?.title || "N/A"}</p>
-            <p className={styles.candidateDetail}>
-              Scheduled: {formatDate(interviewDate)}
-            </p>
-            <p className={styles.candidateDetail}>
-              Interview type: Technical Screening
-            </p>
-          </div>
+          {showError ? (
+            <div className={styles.stateCard}>
+              <p className={styles.stateText}>
+                candidateId and jobId are required.
+              </p>
+            </div>
+          ) : isLoading || !candidate ? (
+            <div className={styles.stateCard}>
+              <p className={styles.stateText}>Loading candidate…</p>
+            </div>
+          ) : (
+            <div className={styles.grid}>
+              {/* Candidate Info */}
+              <section className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <h2 className={styles.candidateName}>{candidate.name}</h2>
+                    <p className={styles.metaText}>{job?.title || "N/A"}</p>
+                  </div>
 
-          {/* Notes Section */}
-          <div className={styles.notesSection}>
-            <h3 className={styles.sectionTitle}>Your notes</h3>
-            <textarea
-              className={styles.notesTextarea}
-              placeholder="Ex: Strong technical depth noted, particularly within the React ecosystem. Provided specific, relevant examples of past work and mentorship experiences. Clear explanation of microservices architecture and API contracts"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={6}
-            />
-            <button
-              className={styles.submitButton}
-              onClick={handleSubmit}
-              disabled={!notes.trim() || isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </button>
-          </div>
+                  <span className={styles.badge}>
+                    {String(candidate.stage ?? "stage").toUpperCase()}
+                  </span>
+                </div>
 
-          {/* After Submission Info */}
-          <div className={styles.afterSubmissionCard}>
-            <h3 className={styles.afterSubmissionTitle}>After Submission n8n will:</h3>
-            <ul className={styles.actionList}>
-              <li>Summarize these notes</li>
-              <li>Updates {candidate.name}'s scorecard</li>
-            </ul>
-          </div>
+                <div className={styles.metaRow}>
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Scheduled</span>
+                    <span className={styles.metaValue}>
+                      {formatDate(interviewDate)}
+                    </span>
+                  </div>
+
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Interview type</span>
+                    <span className={styles.metaValue}>
+                      Technical Screening
+                    </span>
+                  </div>
+                </div>
+              </section>
+
+              {/* Notes */}
+              <section className={styles.card}>
+                <div className={styles.cardHeaderSimple}>
+                  <h3 className={styles.sectionTitle}>Your notes</h3>
+                  <button
+                    className={styles.submitButton}
+                    onClick={handleSubmit}
+                    disabled={!notes.trim() || updateNotesMutation.isPending}
+                    type="button"
+                  >
+                    {updateNotesMutation.isPending ? "Submitting..." : "Submit"}
+                  </button>
+                </div>
+
+                <textarea
+                  className={styles.notesTextarea}
+                  placeholder="Ex: Strong technical depth noted, particularly within React. Clear examples, good communication, solid system thinking…"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={8}
+                />
+                <p className={styles.helperText}>
+                  Keep it concrete: examples, tradeoffs, and clear signals.
+                </p>
+              </section>
+
+              {/* After Submission */}
+              <section className={styles.callout}>
+                <h3 className={styles.calloutTitle}>
+                  After submission, n8n will
+                </h3>
+                <ul className={styles.calloutList}>
+                  <li>Summarize these notes</li>
+                  <li>Update {candidate.name}&apos;s scorecard</li>
+                </ul>
+              </section>
+            </div>
+          )}
         </div>
       </div>
     </>
   );
 }
-

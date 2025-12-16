@@ -4,14 +4,14 @@
   flex-direction: column;
   height: 100vh;
   margin-left: 249px;
-  background-color: #111827;
+  background-color: var(--color-bg);
 }
 
 .pageContent {
   padding: 74px 40px 40px;
   flex-grow: 1;
   overflow-y: auto;
-  background-color: #111827;
+  background-color: var(--color-bg);
 }
 
 .formsContainer {
@@ -22,7 +22,8 @@
 }
 
 .formCard {
-  background-color: #1F2937;
+  background-color: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
   border-radius: 12px;
   padding: 26px 27px;
   flex: 1;
@@ -30,11 +31,11 @@
 }
 
 .formTitle {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 650;
   line-height: 24px;
-  color: #F9FAFB;
+  color: var(--color-prm-txt);
   margin: 0 0 24px 0;
 }
 
@@ -54,11 +55,11 @@
 }
 
 .label {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 650;
   line-height: 17px;
-  color: #F9FAFB;
+  color: var(--color-prm-txt);
   display: block;
   margin-bottom: 8px;
 }
@@ -66,26 +67,33 @@
 .input {
   width: 100%;
   height: 40px;
-  background-color: #111827;
-  border: none;
+
+  background-color: var(--color-bg);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
   border-radius: 6px;
+
   padding: 0 17px;
-  font-family: 'Inter', sans-serif;
+
+  font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 15px;
-  color: #D1D5DB;
+
+  color: var(--color-prm-txt);
   outline: none;
   box-sizing: border-box;
+
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .input::placeholder {
-  color: #D1D5DB;
+  color: var(--color-sec-txt);
   opacity: 0.7;
 }
 
 .input:focus {
-  border: 1px solid #60A5FA;
+  border-color: color-mix(in srgb, var(--color-btn) 60%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
 }
 
 .selectWrapper {
@@ -96,26 +104,35 @@
 .select {
   width: 100%;
   height: 40px;
-  background-color: #111827;
-  border: none;
+
+  background-color: var(--color-bg);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
   border-radius: 6px;
+
   padding: 0 17px;
   padding-right: 40px;
-  font-family: 'Inter', sans-serif;
+
+  font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 15px;
-  color: #D1D5DB;
+
+  color: var(--color-prm-txt);
   outline: none;
+
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+
   cursor: pointer;
   box-sizing: border-box;
+
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .select:focus {
-  border: 1px solid #60A5FA;
+  border-color: color-mix(in srgb, var(--color-btn) 60%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
 }
 
 .dropdownIcon {
@@ -123,7 +140,7 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #F9FAFB;
+  color: var(--color-prm-txt);
   pointer-events: none;
   width: 10px;
   height: 5px;
@@ -132,35 +149,41 @@
 .submitButton {
   width: 147px;
   height: 40px;
-  background-color: #60A5FA;
-  border: none;
+
+  background-color: var(--color-btn);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 70%, transparent);
   border-radius: 8px;
-  color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
+
+  color: var(--btn-txt);
+  font-family: "Inter", sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 650;
   line-height: 17px;
+
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
 }
 
 .submitButton:hover {
-  background-color: #4a90e2;
+  transform: translateY(-1px);
+  opacity: 0.95;
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
 }
 
 .tableCard {
-  background-color: #1F2937;
+  background-color: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
   border-radius: 12px;
   padding: 40px 27px;
   width: 100%;
 }
 
 .tableTitle {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 650;
   line-height: 29px;
-  color: #F9FAFB;
+  color: var(--color-prm-txt);
   margin: 0 0 24px 0;
 }
 
@@ -170,25 +193,22 @@
 }
 
 .table thead tr {
-  border-bottom: 1px solid #6B6D6F;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
 }
 
 .table th {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 19px;
-  color: #F9FAFB;
+
+  color: var(--color-prm-txt);
   text-align: left;
   padding: 12px 0;
 }
 
-.table th:first-child {
-  padding-left: 0;
-}
-
 .table tbody tr {
-  border-bottom: 1px solid #6B6D6F;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
 }
 
 .table tbody tr:last-child {
@@ -196,57 +216,62 @@
 }
 
 .table td {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 15px;
   padding: 12px 0;
+  color: var(--color-sec-txt);
 }
 
 .companyCell {
-  color: #F9FAFB;
+  color: var(--color-prm-txt);
+  font-weight: 600;
 }
 
 .usersCell {
-  color: #FFFFFF;
+  color: var(--color-prm-txt);
 }
 
 .dateCell {
-  color: #D1D5DB;
+  color: var(--color-sec-txt);
 }
 
 .actionsCell {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.actionsCell {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  text-align: right;
 }
 
 .actionButton {
   background: transparent;
-  border: none;
-  color: #F9FAFB;
+  border: 1px solid transparent;
+  color: var(--color-prm-txt);
+
   cursor: pointer;
-  padding: 4px;
-  display: flex;
+  padding: 6px;
+
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s ease;
+
+  border-radius: 10px;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
 }
 
 .actionButton:hover {
-  opacity: 0.7;
+  background: color-mix(in srgb, var(--color-card) 60%, transparent);
+  border-color: color-mix(in srgb, var(--color-sec-txt) 20%, transparent);
+  opacity: 0.95;
+}
+
+.actionButton:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
 }
 
 .emptyCell {
   text-align: center;
-  color: #D1D5DB;
+  color: var(--color-sec-txt);
   padding: 40px 0;
 }
 
@@ -272,4 +297,3 @@
     gap: 0;
   }
 }
-

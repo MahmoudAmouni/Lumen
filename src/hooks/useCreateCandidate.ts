@@ -22,7 +22,21 @@ export const useCreateCandidate = () => {
 
   return useMutation({
     mutationFn: async (data: CreateCandidateData) => {
-      return candidateAPI.createCandidate(data);
+      // Map frontend field names to backend API field names
+      return candidateAPI.createCandidate({
+        full_name: data.name,
+        email: data.email,
+        job_id: data.jobId,
+        stage: data.stage,
+        recruiter_id: data.recruiterId,
+        level: data.level,
+        age: data.age,
+        phone_number: data.phone,
+        location: data.location,
+        github_url: data.github,
+        linkedin_url: data.linkedin,
+        source: data.source,
+      });
     },
     onSuccess: async (_, variables) => {
       toast.success("Candidate added successfully");

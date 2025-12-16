@@ -1,18 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/SiderBar";
 import styles from "../styles/DashboardPage.module.css";
-import { FiChevronDown } from "react-icons/fi";
+import SelectField from "../components/SelectField";
 import { useData } from "../context/DataContext";
+import type { Job } from "../context/DataContext";
+import { useJobsByCompany } from "../hooks/useJobsByCompany";
+import { useUpdateJobStatus } from "../hooks/useUpdateJobStatus";
+import { useCandidatesByJob } from "../hooks/useCandidatesByJob";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { jobs, getCandidatesByStage, getPipelineStages } = useData();
+  const { jobs, getPipelineStages } = useData();
   const [selectedJobId, setSelectedJobId] = useState<string>("");
 
-  // Check if jobId is in URL params (e.g., when navigating from CreateJob)
+  const companyId =
+    typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
+
+  useJobsByCompany(companyId);
+  const updateJobStatusMutation = useUpdateJobStatus(companyId);
+  const { data: allCandidates = [] } = useCandidatesByJob(
+    selectedJobId || null
+  );
+
   useEffect(() => {
     const jobIdFromUrl = searchParams.get("jobId");
     if (jobIdFromUrl && jobs.some((j) => j.id === jobIdFromUrl)) {
@@ -23,33 +35,44 @@ export default function Dashboard() {
   const selectedJob = jobs.find((j) => j.id === selectedJobId);
   const pipelineStages = selectedJob ? getPipelineStages(selectedJobId) : [];
 
-  // Get counts for each stage
-  const stagesWithCounts = pipelineStages.map((stage) => {
-    const candidates = selectedJobId ? getCandidatesByStage(selectedJobId, stage.name) : [];
-    const count = candidates.length;
-    
-    // Determine color based on stage name
-    let color = "#4A90E2"; // Default blue for Applied
-    if (stage.name.toLowerCase().includes("hired")) {
-      color = "#23E695"; // Green
-    } else if (stage.name.toLowerCase().includes("rejected")) {
-      color = "#E24A4A"; // Red
-    }
-
-    return {
-      label: stage.name,
-      count,
-      color,
-    };
-  });
-
-  const handleCardClick = (stage: string) => {
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (!selectedJobId) return;
-    navigate(`/candidate?stage=${encodeURIComponent(stage)}&jobId=${encodeURIComponent(selectedJobId)}`);
+    const newStatus = e.target.value as Job["status"];
+    updateJobStatusMutation.mutate({ jobId: selectedJobId, status: newStatus });
   };
 
   const handleJobChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedJobId(e.target.value);
+  };
+
+  const stagesWithCounts = useMemo(() => {
+    return pipelineStages.map((stage) => {
+      const candidates = allCandidates.filter(
+        (c) => c.stage?.toLowerCase() === stage.name.toLowerCase()
+      );
+
+      const name = stage.name.toLowerCase();
+      const tone = name.includes("hired")
+        ? "success"
+        : name.includes("rejected")
+        ? "danger"
+        : "primary";
+
+      return {
+        label: stage.name,
+        count: candidates.length,
+        tone, // "primary" | "success" | "danger"
+      };
+    });
+  }, [pipelineStages, allCandidates]);
+
+  const handleCardClick = (stage: string) => {
+    if (!selectedJobId) return;
+    navigate(
+      `/candidate?stage=${encodeURIComponent(stage)}&jobId=${encodeURIComponent(
+        selectedJobId
+      )}`
+    );
   };
 
   return (
@@ -63,56 +86,67 @@ export default function Dashboard() {
           <div className={styles.headerRow}>
             <h1 className={styles.pageTitle}>Hiring Dashboard</h1>
 
-            <div className={styles.filterContainer}>
-              <label htmlFor="jobSelect" className={styles.filterLabel}>
-                View pipeline Stages for
-              </label>
-              <div className={styles.selectWrapper}>
-                <select
-                  id="jobSelect"
-                  className={styles.jobSelect}
-                  value={selectedJobId}
-                  onChange={handleJobChange}
-                >
-                  <option value="">Select Job</option>
-                  {jobs.map((job) => (
-                    <option key={job.id} value={job.id}>
-                      {job.title}
-                    </option>
-                  ))}
-                </select>
-                <FiChevronDown className={styles.dropdownIcon} />
-              </div>
-            </div>
+            <SelectField
+              id="jobSelect"
+              label="View pipeline Stages for"
+              value={selectedJobId}
+              onChange={handleJobChange}
+            >
+              <option value="">Select Job</option>
+              {jobs.map((job) => (
+                <option key={job.id} value={job.id}>
+                  {job.title}
+                </option>
+              ))}
+            </SelectField>
           </div>
 
+          {selectedJob && (
+            <div className={`${styles.headerRow} ${styles.headerRowCompact}`}>
+              <SelectField
+                id="jobStatus"
+                label="Job status"
+                value={selectedJob.status || "open"}
+                onChange={handleStatusChange}
+                disabled={updateJobStatusMutation.isPending}
+              >
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+                <option value="draft">Draft</option>
+                <option value="paused">Paused</option>
+              </SelectField>
+            </div>
+          )}
+
           {!selectedJobId ? (
-            <div className={styles.noJobSelected}>
+            <div className={styles.emptyState}>
               Please select a job to view pipeline stages and candidates.
             </div>
           ) : stagesWithCounts.length === 0 ? (
-            <div className={styles.noStages}>
-              No pipeline stages defined for this job. Create pipeline stages when creating a job.
+            <div className={styles.emptyState}>
+              No pipeline stages defined for this job. Create pipeline stages
+              when creating a job.
             </div>
           ) : (
             <div className={styles.pipelineGrid}>
               {stagesWithCounts.map((stage, index) => (
-                <div
+                <button
                   key={index}
+                  type="button"
                   className={styles.stageCard}
                   onClick={() => handleCardClick(stage.label)}
-                  style={{ cursor: "pointer" }}
                 >
                   <div className={styles.stageContent}>
                     <span
-                      className={styles.stageLabel}
-                      style={{ color: stage.color }}
+                      className={`${styles.stageLabel} ${
+                        styles[`tone_${stage.tone}`]
+                      }`}
                     >
                       {stage.label}
                     </span>
                     <span className={styles.stageCount}>{stage.count}</span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}

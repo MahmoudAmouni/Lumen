@@ -4,167 +4,235 @@
   flex-direction: column;
   height: 100vh;
   margin-left: 249px;
-  background-color: #111827;
+  background-color: var(--color-bg);
 }
 
 .pageContent {
   padding: 74px 40px 40px;
   flex-grow: 1;
   overflow-y: auto;
-  background-color: #111827;
+  background-color: var(--color-bg);
 }
 
-.candidateInfoCard {
-  background-color: #1F2937;
-  border-radius: 12px;
-  padding: 23px;
-  margin-bottom: 31px;
-  width: 100%;
-  max-width: 1115px;
-}
-
-.candidateName {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 24px;
-  color: #FFFFFF;
-  margin: 0 0 12px 0;
-}
-
-.candidateDetail {
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 18px;
-  color: #D1D5DB;
-  margin: 8px 0;
-}
-
-.notesSection {
-  background-color: #1F2937;
-  border-radius: 12px;
-  padding: 20px 30px 30px;
-  margin-bottom: 31px;
-  width: 100%;
-  max-width: 1115px;
-  position: relative;
-}
-
-.sectionTitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 19px;
-  color: #FFFFFF;
-  margin: 0 0 20px 0;
-}
-
-.notesTextarea {
-  width: 100%;
-  min-height: 99px;
-  background-color: #111827;
-  border: none;
-  border-radius: 12px;
-  padding: 15px 21px;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 15px;
-  color: #D1D5DB;
-  resize: vertical;
-  outline: none;
-  margin-bottom: 20px;
-}
-
-.notesTextarea::placeholder {
-  color: #D1D5DB;
-  opacity: 0.7;
-}
-
-.notesTextarea:focus {
-  border: 1px solid #60A5FA;
-}
-
-.submitButton {
-  position: absolute;
-  right: 30px;
-  bottom: 30px;
-  width: 130px;
-  height: 37px;
-  background-color: #60A5FA;
-  border: none;
-  border-radius: 8px;
-  color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 19px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.submitButton:hover:not(:disabled) {
-  background-color: #4a90e2;
-}
-
-.submitButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.afterSubmissionCard {
-  background-color: #60A5FA;
-  border-radius: 12px;
-  padding: 20px 31px;
+/* layout */
+.grid {
+  display: grid;
+  gap: 18px;
   width: 100%;
   max-width: 1116px;
 }
 
-.afterSubmissionTitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 10px;
-  color: #F9FAFB;
-  margin: 0 0 16px 0;
+/* shared card */
+.card {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 22px color-mix(in srgb, #000 22%, transparent);
 }
 
-.actionList {
-  list-style: none;
-  padding: 0;
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cardHeaderSimple {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.candidateName {
   margin: 0;
-}
-
-.actionList li {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 17px;
-  color: #F9FAFB;
-  margin-bottom: 8px;
-  padding-left: 20px;
-  position: relative;
-}
-
-.actionList li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: #F9FAFB;
+  font-family: "Inter", sans-serif;
   font-size: 20px;
-}
-
-.errorMessage {
-  text-align: center;
-  padding: 40px;
-  background-color: var(--color-card);
-  border-radius: 8px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
   color: var(--color-prm-txt);
-  font-size: 1.1rem;
-  margin-top: 20px;
 }
 
+.metaText {
+  margin: 6px 0 0;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-sec-txt);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+
+  color: var(--color-prm-txt);
+  background: color-mix(in srgb, var(--color-btn) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 24%, transparent);
+}
+
+/* meta row */
+.metaRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.metaItem {
+  background: color-mix(in srgb, var(--color-bg) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 16%, transparent);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.metaLabel {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--color-sec-txt);
+  margin-bottom: 6px;
+}
+
+.metaValue {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--color-prm-txt);
+}
+
+/* notes */
+.sectionTitle {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-prm-txt);
+}
+
+.notesTextarea {
+  width: 100%;
+  min-height: 160px;
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 12px;
+  padding: 14px 16px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-prm-txt);
+
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.notesTextarea::placeholder {
+  color: var(--color-sec-txt);
+  opacity: 0.8;
+}
+
+.notesTextarea:focus {
+  border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
+}
+
+.helperText {
+  margin: 10px 0 0;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-sec-txt);
+}
+
+/* actions */
+.submitButton {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-btn) 28%, transparent);
+  background: color-mix(in srgb, var(--color-btn) 18%, transparent);
+  color: var(--color-prm-txt);
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-btn) 26%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px color-mix(in srgb, #000 22%, transparent);
+}
+
+.submitButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* callout */
+.callout {
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: color-mix(in srgb, var(--color-btn) 16%, var(--color-card));
+  border: 1px solid color-mix(in srgb, var(--color-btn) 24%, transparent);
+}
+
+.calloutTitle {
+  margin: 0 0 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 850;
+  color: var(--color-prm-txt);
+}
+
+.calloutList {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--color-prm-txt);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.calloutList li {
+  margin: 6px 0;
+}
+
+/* empty / loading */
+.stateCard {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 18px;
+  max-width: 720px;
+}
+
+.stateText {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--color-sec-txt);
+}
+
+/* responsive */
 @media (max-width: 768px) {
   .main {
     margin-left: 0;
@@ -174,16 +242,11 @@
     padding: 20px 16px;
   }
 
-  .candidateInfoCard,
-  .notesSection,
-  .afterSubmissionCard {
+  .metaRow {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
     max-width: 100%;
   }
-
-  .submitButton {
-    position: static;
-    width: 100%;
-    margin-top: 16px;
-  }
 }
-

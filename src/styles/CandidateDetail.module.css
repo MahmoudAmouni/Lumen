@@ -4,289 +4,341 @@
   flex-direction: column;
   height: 100vh;
   margin-left: 249px;
-  background-color: #111827;
+  background-color: var(--color-bg);
 }
 
 .pageContent {
   padding: 74px 40px 40px;
   flex-grow: 1;
   overflow-y: auto;
-  background-color: #111827;
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1116px;
 }
 
-.candidateHeader {
-  margin-bottom: 40px;
-  padding-bottom: 30px;
+/* states */
+.stateCard {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 18px;
+  max-width: 720px;
 }
 
-.candidateNameSection {
+.stateText {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--color-sec-txt);
+}
+
+/* header */
+.headerCard {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 22px color-mix(in srgb, #000 22%, transparent);
+}
+
+.headerTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.nameBlock {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .candidateName {
-  font-family: 'Inter', sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 44px;
-  color: #FFFFFF;
   margin: 0;
-  letter-spacing: -0.5px;
+  font-family: "Inter", sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+  color: var(--color-prm-txt);
 }
 
 .levelBadge {
-  background-color: #60A5FA;
-  color: #F9FAFB;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 20px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 850;
+
+  color: var(--color-prm-txt);
+  background: color-mix(in srgb, var(--color-btn) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 24%, transparent);
 }
 
-.candidateMeta {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-  color: #E5E7EB;
-  margin-bottom: 24px;
+.metaRow {
+  margin-top: 12px;
   display: flex;
-  align-items: center;
-  gap: 16px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.metaDot {
-  width: 6px;
-  height: 6px;
-  background-color: #9CA3AF;
-  border-radius: 50%;
-  flex-shrink: 0;
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+
+  color: var(--color-sec-txt);
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 16%, transparent);
 }
 
+/* contact buttons */
 .contactButtons {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 30px;
 }
 
-.contactButton {
-  background-color: #60A5FA;
-  color: #F9FAFB;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 600;
+.pillButton {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  text-decoration: none;
+
+  color: var(--color-prm-txt);
+  background: color-mix(in srgb, var(--color-btn) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 26%, transparent);
+
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 850;
+
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pillButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.pillButton:hover {
+  background: color-mix(in srgb, var(--color-btn) 24%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px color-mix(in srgb, #000 22%, transparent);
+}
+
+/* shared cards */
+.card {
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 22px color-mix(in srgb, #000 18%, transparent);
+}
+
+.cardHeader {
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  line-height: 20px;
-  height: 40px;
-  min-width: 90px;
-}
-
-.contactButton:hover {
-  background-color: rgba(96, 165, 250, 0.9);
-}
-
-.appliedForCard {
-  background-color: #1F2937;
-  border-radius: 12px;
-  padding: 40px;
-  margin-bottom: 32px;
-  width: 100%;
-  max-width: 1112px;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .cardTitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 32px;
-  color: #FFFFFF;
-  margin: 0 0 20px 0;
-  letter-spacing: -0.3px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--color-prm-txt);
+}
+
+.titleIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-sec-txt);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appliedTop {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .jobTitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 28px;
-  color: #FFFFFF;
-  margin: 0 0 20px 0;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 850;
+  color: var(--color-prm-txt);
 }
 
-.jobTitleRepeat {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 28px;
-  color: #FFFFFF;
-  margin: 24px 0 0 0;
-}
-
-.jobDetailsRow {
+.jobChips {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 20px;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-  color: #FFFFFF;
-}
-
-.jobDetailItem {
-  display: flex;
-  align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
-.card {
-  background-color: #1F2937;
-  border: 1px solid rgba(188, 188, 188, 0.2);
-  border-radius: 12px;
-  padding: 32px;
-  margin-bottom: 32px;
+.chip {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 750;
+
+  color: var(--color-sec-txt);
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 16%, transparent);
 }
 
-.jobInfo {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  color: #D1D5DB;
-  margin: 12px 0;
-  line-height: 24px;
+/* info */
+.infoLine {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-sec-txt);
 }
 
-.emailLink {
+.infoValue {
+  color: var(--color-prm-txt);
+  font-weight: 850;
+}
+
+.inlineLink {
   color: var(--color-btn);
   text-decoration: none;
+  font-weight: 850;
 }
 
-.emailLink:hover {
+.inlineLink:hover {
   text-decoration: underline;
 }
 
-.coverLetterSection {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(188, 188, 188, 0.2);
+/* sections inside cards */
+.sectionBlock {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
 }
 
-.coverLetterLabel {
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #FFFFFF;
-  margin: 0 0 12px 0;
+.sectionLabel {
+  margin: 0 0 6px 0;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--color-prm-txt);
 }
 
-.coverLetterText {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  color: #E5E7EB;
-  line-height: 1.7;
+.sectionText {
   margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.65;
+  color: var(--color-sec-txt);
+  white-space: pre-wrap;
 }
 
+/* attachments */
 .attachmentsList {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
 }
 
-.attachmentsList li {
-  margin-bottom: 8px;
+.attachmentItem {
+  display: flex;
 }
 
 .attachmentLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 850;
+
   color: var(--color-btn);
   text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  line-height: 24px;
 }
 
 .attachmentLink:hover {
   text-decoration: underline;
 }
 
-.contactInfo {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  color: #D1D5DB;
-  margin: 12px 0;
-  line-height: 24px;
-}
-
-.notesSection {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(188, 188, 188, 0.2);
-}
-
-.notesLabel {
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #FFFFFF;
-  margin: 0 0 12px 0;
-}
-
-.notesText {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  color: #E5E7EB;
-  line-height: 1.7;
-  margin: 0;
-}
-
+/* timeline */
 .timelineList {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
 }
 
 .timelineItem {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  color: #E5E7EB;
-  margin-bottom: 16px;
-  padding-left: 24px;
-  position: relative;
-  line-height: 24px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 16%, transparent);
 }
 
-.timelineItem::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: var(--color-btn);
-  font-size: 20px;
-}
-
-.errorMessage {
-  text-align: center;
-  padding: 40px;
-  background-color: var(--color-card);
-  border-radius: 8px;
+.timelineDate {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
   color: var(--color-prm-txt);
-  font-size: 1.1rem;
-  margin-top: 20px;
 }
 
+.timelineText {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--color-sec-txt);
+}
+
+/* responsive */
 @media (max-width: 768px) {
   .main {
     margin-left: 0;
@@ -296,26 +348,11 @@
     padding: 20px 16px;
   }
 
-  .pageTitle {
-    font-size: 24px;
-    margin-bottom: 24px;
+  .timelineItem {
+    grid-template-columns: 1fr;
   }
 
-  .card {
-    padding: 16px;
-  }
-
-  .candidateName {
-    font-size: 24px;
-  }
-
-  .jobTitle {
-    font-size: 18px;
-  }
-
-  .jobDetails {
-    flex-direction: column;
-    gap: 8px;
+  .pillButton span {
+    display: none;
   }
 }
-

@@ -1,220 +1,167 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import Header from "../components/Header";
-import AdminSidebar from "../components/AdminSidebar";
+import AdminSidebar from "../components/admin/AdminSidebar";
+import CompanyUsersModal from "../components/CompanyUsersModal";
 import styles from "../styles/AdminDashboard.module.css";
+
 import { useData } from "../context/DataContext";
-import { FiEdit2, FiTrash2, FiChevronDown } from "react-icons/fi";
+import { useCompanies } from "../hooks/useCompanies";
+import { useUsers } from "../hooks/useUsers";
+import { useCreateCompany } from "../hooks/useCreateCompany";
+import { useCreateUser } from "../hooks/useCreateUser";
+
+import AddCompanyCard from "../components/admin/AddCompanyCard";
+import AddUserCard from "../components/admin/AddUserCard";
+import CompaniesTableCard from "../components/admin/CompaniesTableCard";
+
+type Company = { id: string; name: string; createdAt: string };
 
 export default function AdminDashboard() {
-  const { companies, users, addCompany, addUser, getUsersByCompany, deleteCompany, deleteUser } = useData();
-  
-  const [companyName, setCompanyName] = useState("");
-  const [userFullName, setUserFullName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [selectedCompanyId, setSelectedCompanyId] = useState("");
-  const [userRole, setUserRole] = useState<"recruiter" | "interviewer">("recruiter");
+  const { getUsersByCompany } = useData();
 
-  const handleAddCompany = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (companyName.trim()) {
-      addCompany(companyName);
-      setCompanyName("");
-    }
-  };
+  const { data: companiesData = [], isLoading: isLoadingCompanies } =
+    useCompanies();
+  const { isLoading: isLoadingUsers } = useUsers();
 
-  const handleAddUser = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userFullName.trim() && userEmail.trim() && selectedCompanyId) {
-      addUser({
-        fullName: userFullName,
-        email: userEmail,
-        companyId: selectedCompanyId,
-        role: userRole,
-      });
-      setUserFullName("");
-      setUserEmail("");
-      setSelectedCompanyId("");
-      setUserRole("recruiter");
-    }
-  };
+  const companies = companiesData as Company[];
+  const isFetching = isLoadingCompanies || isLoadingUsers;
+
+  const createCompanyMutation = useCreateCompany();
+  const createUserMutation = useCreateUser();
+
+  const [selectedCompanyForView, setSelectedCompanyForView] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [companyUsers, setCompanyUsers] = useState<any[]>([]);
+  const [isLoadingCompanyUsers, setIsLoadingCompanyUsers] = useState(false);
 
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
     } catch {
       return dateString;
     }
   };
 
-  const getCompanyUsers = (companyId: string) => {
-    return getUsersByCompany(companyId);
+  const getCompanyUsersDisplay = (companyId: string) => {
+    const users = getUsersByCompany(companyId);
+    if (!users?.length) return "No users";
+
+    const valid = users.filter((u: any) => u.fullName);
+    if (!valid.length) return "No users";
+
+    return valid
+      .map((u: any) => {
+        const roleDisplay =
+          u.role === "recruiter"
+            ? "Recruiter"
+            : u.role === "interviewer"
+            ? "Interviewer"
+            : u.role;
+        return `${u.fullName} (${roleDisplay})`;
+      })
+      .join(", ");
   };
 
-  const getCompanyUsersNames = (companyId: string) => {
-    const companyUsers = getUsersByCompany(companyId);
-    if (companyUsers.length === 0) return "No users";
-    if (companyUsers.length === 1) return companyUsers[0].fullName;
-    if (companyUsers.length === 2) return `${companyUsers[0].fullName}, ${companyUsers[1].fullName}`;
-    return `${companyUsers[0].fullName}, ${companyUsers[1].fullName}...`;
+  const handleCreateCompany = (name: string) => {
+    createCompanyMutation.mutate(name, {
+      onError: (err: any) => {
+        let message =
+          err?.message || "Failed to create company. Please try again.";
+
+        if (
+          message.includes("Duplicate entry") &&
+          message.includes("company_names_name_unique")
+        ) {
+          message =
+            "This company name already exists. Please choose another name.";
+        }
+
+        toast.error(message);
+      },
+    });
+  };
+
+  const handleCreateUser = (payload: {
+    name: string;
+    email: string;
+    password: string;
+    company_id: string;
+    role: "recruiter" | "interviewer";
+  }) => {
+    createUserMutation.mutate(payload, {
+      onError: (err: any) => {
+        toast.error(err?.message || "Failed to create user. Please try again.");
+      },
+    });
+  };
+
+  const handleOpenCompany = (company: { id: string; name: string }) => {
+    setSelectedCompanyForView(company);
+    setIsLoadingCompanyUsers(true);
+
+    try {
+      const users = getUsersByCompany(company.id);
+      setCompanyUsers(users || []);
+    } catch {
+      setCompanyUsers([]);
+      toast.error("Failed to load users for this company");
+    } finally {
+      setIsLoadingCompanyUsers(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCompanyForView(null);
+    setCompanyUsers([]);
   };
 
   return (
     <>
       <AdminSidebar />
+
       <div className={styles.main}>
         <Header title="SE Factory" />
+
         <div className={styles.pageContent}>
           <div className={styles.formsContainer}>
-            {/* Add New Company Form */}
-            <div className={styles.formCard}>
-              <h2 className={styles.formTitle}>Add New Company</h2>
-              <form onSubmit={handleAddCompany}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Company Name:</label>
-                  <input
-                    type="text"
-                    className={styles.input}
-                    placeholder="Company Name"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    required
-                  />
-                </div>
-                <button type="submit" className={styles.submitButton}>
-                  Submit
-                </button>
-              </form>
-            </div>
+            <AddCompanyCard
+              isSubmitting={createCompanyMutation.isPending}
+              onSubmit={handleCreateCompany}
+            />
 
-            {/* Add New User Form */}
-            <div className={styles.formCard}>
-              <h2 className={styles.formTitle}>Add New</h2>
-              <form onSubmit={handleAddUser}>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Full Name:</label>
-                    <input
-                      type="text"
-                      className={styles.input}
-                      placeholder="User Name"
-                      value={userFullName}
-                      onChange={(e) => setUserFullName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Email:</label>
-                    <input
-                      type="email"
-                      className={styles.input}
-                      placeholder="Email"
-                      value={userEmail}
-                      onChange={(e) => setUserEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Company:</label>
-                    <div className={styles.selectWrapper}>
-                      <select
-                        className={styles.select}
-                        value={selectedCompanyId}
-                        onChange={(e) => setSelectedCompanyId(e.target.value)}
-                        required
-                      >
-                        <option value="">Select Company</option>
-                        {companies.map((company) => (
-                          <option key={company.id} value={company.id}>
-                            {company.name}
-                          </option>
-                        ))}
-                      </select>
-                      <FiChevronDown className={styles.dropdownIcon} />
-                    </div>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Role:</label>
-                    <div className={styles.selectWrapper}>
-                      <select
-                        className={styles.select}
-                        value={userRole}
-                        onChange={(e) => setUserRole(e.target.value as "recruiter" | "interviewer")}
-                        required
-                      >
-                        <option value="recruiter">Recruiter</option>
-                        <option value="interviewer">Interviewer</option>
-                      </select>
-                      <FiChevronDown className={styles.dropdownIcon} />
-                    </div>
-                  </div>
-                </div>
-                <button type="submit" className={styles.submitButton}>
-                  Submit
-                </button>
-              </form>
-            </div>
+            <AddUserCard
+              companies={companies}
+              isSubmitting={createUserMutation.isPending}
+              onSubmit={handleCreateUser}
+            />
           </div>
 
-          {/* All Companies Table */}
-          <div className={styles.tableCard}>
-            <h2 className={styles.tableTitle}>All Companies</h2>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Company</th>
-                  <th>Users</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {companies.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className={styles.emptyCell}>
-                      No companies registered yet
-                    </td>
-                  </tr>
-                ) : (
-                  companies.map((company) => (
-                    <tr key={company.id}>
-                      <td className={styles.companyCell}>{company.name}</td>
-                      <td className={styles.usersCell}>{getCompanyUsersNames(company.id)}</td>
-                      <td className={styles.dateCell}>{formatDate(company.createdAt)}</td>
-                      <td className={styles.actionsCell}>
-                        <button
-                          className={styles.actionButton}
-                          onClick={() => {
-                            // Edit functionality can be added later
-                            console.log("Edit company:", company.id);
-                          }}
-                          aria-label="Edit company"
-                        >
-                          <FiEdit2 size={16} />
-                        </button>
-                        <button
-                          className={styles.actionButton}
-                          onClick={() => {
-                            if (window.confirm(`Are you sure you want to delete ${company.name}?`)) {
-                              deleteCompany(company.id);
-                            }
-                          }}
-                          aria-label="Delete company"
-                        >
-                          <FiTrash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          <CompaniesTableCard
+            companies={companies}
+            isFetching={isFetching}
+            formatDate={formatDate}
+            getUsersDisplay={getCompanyUsersDisplay}
+            onViewCompany={handleOpenCompany}
+          />
         </div>
       </div>
+
+      {selectedCompanyForView && (
+        <CompanyUsersModal
+          company={selectedCompanyForView}
+          users={companyUsers}
+          isLoading={isLoadingCompanyUsers}
+          onClose={handleCloseModal}
+        />
+      )}
     </>
   );
 }
-
