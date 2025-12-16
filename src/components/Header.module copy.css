@@ -1,0 +1,127 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    height: 72px;
+    padding: 16px 28px;
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: color-mix(in srgb, var(--color-header) 85%, transparent);
+    backdrop-filter: blur(10px);
+
+    border-bottom: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
+}
+
+.header.centered {
+    justify-content: center;
+}
+
+.header.centered .headerTitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.headerTitle {
+    font-family: "Inter", sans-serif;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -0.3px;
+    color: var(--color-prm-txt);
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.headerActions {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Theme toggle */
+.themeToggle {
+    background: var(--header-btn);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
+
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+
+    display: grid;
+    place-items: center;
+
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    color: var(--color-prm-txt);
+}
+
+.themeToggle:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+}
+
+.themeToggle svg {
+    width: 16px;
+    height: 16px;
+}
+
+.logoutBtn {
+    background: color-mix(in srgb, var(--color-btn) 18%, transparent);
+    color: var(--color-prm-txt);
+    border: 1px solid color-mix(in srgb, var(--color-btn) 35%, transparent);
+
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 650;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+}
+
+.logoutBtn:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+    background: color-mix(in srgb, var(--color-btn) 26%, transparent);
+    box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+}
+
+.logoutIcon {
+    width: 18px;
+    height: 18px;
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 14px 16px;
+    }
+
+    .headerTitle {
+        font-size: 18px;
+    }
+
+    .logoutText {
+        display: none;
+    }
+
+    .logoutBtn {
+        padding: 0 10px;
+    }
+}
