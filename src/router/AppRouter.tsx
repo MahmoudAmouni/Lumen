@@ -19,6 +19,7 @@ export const AppRouter = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/Job" element={<JobList />} />
         <Route path="/createJob" element={<CreateJob />} />
+        <Route path="/jobs/:jobId" element={<JobDetail />} />
         <Route path="/candidate" element={<Candidates />} />
         <Route path="/candidate-detail" element={<CandidateDetail />} />
         <Route path="/ai-copilot" element={<AICopilot />} />
