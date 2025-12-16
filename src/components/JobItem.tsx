@@ -4,13 +4,13 @@ import type { ReactNode } from "react";
 interface JobItemProps {
   title: string;
   type: string;
-  status: "open" | "closed";
+  status: "open" | "closed" | "draft" | "paused";
   stats: {
     applied: number;
     hired: number;
     inReview: number;
   };
-  actionButtons?: ReactNode; 
+  actionButtons?: ReactNode;
 }
 
 export default function JobItem({
@@ -20,18 +20,28 @@ export default function JobItem({
   stats,
   actionButtons,
 }: JobItemProps) {
+  const normalized = status || "open";
+
   const statusClass =
-    status === "open" ? styles.statusOpen : styles.statusClose;
-  const statusText = status === "open" ? "Open" : "Closed";
+    normalized === "open"
+      ? styles.statusOpen
+      : normalized === "closed"
+      ? styles.statusClosed
+      : styles.statusNeutral;
+
+  const statusText = normalized.charAt(0).toUpperCase() + normalized.slice(1);
 
   return (
     <div className={styles.jobCard}>
       <h3 className={styles.jobTitle}>{title}</h3>
       <p className={styles.jobType}>{type}</p>
+
       <span className={`${styles.jobStatus} ${statusClass}`}>{statusText}</span>
+
       {actionButtons && (
         <div className={styles.actionButtons}>{actionButtons}</div>
       )}
+
       <div className={styles.jobStats}>
         <div className={styles.statItem}>
           <span className={styles.statValue}>{stats.applied}</span>

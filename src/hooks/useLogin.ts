@@ -21,6 +21,12 @@ export const useLogin = () => {
       return authAPI.login(email, password);
     },
     onSuccess: (response) => {
+      // Check if response and user exist
+      if (!response || !response.user) {
+        toast.error("Invalid login response. Please try again.");
+        return;
+      }
+
       // Store user data in localStorage
       localStorage.setItem("user_id", String(response.user.id || ""));
       localStorage.setItem("company_id", String(response.user.company_id || ""));

@@ -86,7 +86,7 @@ export default function Candidates() {
 
     setImportMessage(null);
 
-    bulkImportMutation.mutate(file, {
+    bulkImportMutation.mutate({ file, jobId }, {
       onSuccess: () => {
         setImportMessage({
           type: "success",

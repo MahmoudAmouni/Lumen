@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { candidateAPI } from "../services/api";
 
 export interface Candidate {
   id: string;
@@ -40,7 +41,7 @@ export interface Job {
   skills: { name: string; type: "1" | "2" }[];
   criteria: { name: string }[];
   createdAt: string;
-  status?: "open" | "closed"; // Optional status, defaults to "open"
+  status?: "open" | "closed" | "draft" | "paused"; // Optional status, defaults to "open"
 }
 
 export interface Company {
@@ -59,37 +60,6 @@ export interface User {
   createdAt: string;
 }
 
-// Test data constants for testing
-const TEST_JOB: Omit<Job, "id" | "createdAt" | "status"> = {
-  title: "Senior Full-Stack Engineer",
-  level: "senior",
-  location: "Beirut, Lebanon",
-  employmentType: "full-time",
-  description: "We are looking for an experienced Senior Full-Stack Engineer to join our team.",
-  pipeline: [
-    { name: "Applied", order: 0 },
-    { name: "Technical Interview", order: 1 },
-    { name: "Interview", order: 2 },
-    { name: "Offer", order: 3 },
-    { name: "Rejected", order: 4 },
-  ],
-  skills: [
-    { name: "React", type: "1" },
-    { name: "TypeScript", type: "1" },
-    { name: "CSS", type: "2" },
-  ],
-  criteria: [
-    { name: "Communication" },
-    { name: "Team Collaboration" },
-  ],
-};
-
-const TEST_CANDIDATES: Omit<Candidate, "id" | "stage">[] = [
-  { name: "Omar Khalil", email: "omarkhalil@gmail.com", jobId: "" },
-  { name: "Sarah Ahmed", email: "sarah.ahmed@example.com", jobId: "" },
-  { name: "Mohamed Ali", email: "mohamed.ali@example.com", jobId: "" },
-];
-
 interface DataContextType {
   jobs: Job[];
   candidates: Candidate[];
@@ -97,110 +67,29 @@ interface DataContextType {
   users: User[];
   addJob: (job: Omit<Job, "id" | "createdAt" | "status">) => string;
   addCandidates: (candidates: Omit<Candidate, "id" | "stage">[], jobId: string) => void;
-  updateCandidateStage: (candidateId: string, newStage: string) => void;
+  updateCandidateStage: (candidateId: string, newStage: string, jobId?: string) => Promise<void>;
   updateCandidateInterviewNotes: (candidateId: string, notes: string) => void;
-  getCandidatesByStage: (jobId: string, stage: string) => Candidate[];
+  getCandidatesByStage: (jobId: string, stage: string) => Promise<Candidate[]>;
   getPipelineStages: (jobId: string) => PipelineStage[];
   getAllCandidatesForJob: (jobId: string) => Candidate[];
   updateJobStatus: (jobId: string, status: "open" | "closed") => void;
   addCompany: (name: string) => string;
+  setCompanies: (companies: Company[]) => void;
   addUser: (user: Omit<User, "id" | "createdAt">) => string;
+  setUsers: (users: User[]) => void;
   getUsersByCompany: (companyId: string) => User[];
   deleteCompany: (companyId: string) => void;
   deleteUser: (userId: string) => void;
+  setJobsFromAPI: (jobs: Job[]) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
-  // Initialize with test data for testing
-  const initializeTestData = () => {
-    const testJobId = `job-test-${Date.now()}`;
-    const testJob: Job = {
-      ...TEST_JOB,
-      id: testJobId,
-      createdAt: new Date().toISOString(),
-      status: "open",
-    };
-    
-    const testCandidates: Candidate[] = TEST_CANDIDATES.map((candidate, index) => {
-      const baseCandidate = {
-        ...candidate,
-        id: `candidate-test-${index}`,
-        stage: index === 0 ? "Applied" : index === 1 ? "Technical Interview" : "Interview",
-        jobId: testJobId,
-      };
-
-      // Add additional fields for first candidate (Omar Khalil) to match the design
-      if (index === 0) {
-        return {
-          ...baseCandidate,
-          age: 28,
-          location: "Beirut, Lebanon",
-          level: "senior",
-          linkedin: "https://linkedin.com/in/omarkhalil",
-          github: "https://github.com/omarkhalil",
-          phone: "+961 70 123 456",
-          recruiter: "Nabiha",
-          recruiterEmail: "nabiha@murex.com",
-          internalNotes: "Strong technical fit. Requested interview with Nicolas Jalbouta. Follow-up scheduled for Jan 15.",
-          coverLetter: "I'm excited to apply for the Senior Full-Stack role at Murex. With 8+ years building scalable fintech systems using React and Laravel, I've led teams through complex migrations and delivered high-impact features under tight deadlines...",
-          source: "LinkedIn",
-          appliedDate: new Date("2024-12-05").toISOString(),
-          attachments: ["CV_OmarKhalil.pdf", "CV_OmarKhalil_v2.pdf"],
-          timeline: [
-            { date: new Date("2024-12-05").toISOString(), event: "Application Received via LinkedIn" },
-            { date: new Date("2024-12-06").toISOString(), event: "Screening Scheduled with Sadika Eldaousa" },
-            { date: new Date("2024-12-10").toISOString(), event: "Screen Completed — Scorecard Drafted" },
-            { date: new Date("2024-12-12").toISOString(), event: "Moved to Technical Interview Stage" },
-          ],
-        };
-      }
-
-      return baseCandidate;
-    });
-
-    return { testJob, testCandidates };
-  };
-
-  const { testJob, testCandidates } = initializeTestData();
-  const [jobs, setJobs] = useState<Job[]>([testJob]);
-  const [candidates, setCandidates] = useState<Candidate[]>(testCandidates);
-  
-  // Initialize with test company and user
-  const [companies, setCompanies] = useState<Company[]>([
-    {
-      id: "company-1",
-      name: "SE Factory",
-      createdAt: new Date("2025-12-02").toISOString(),
-      userIds: ["user-1"],
-    },
-    {
-      id: "company-2",
-      name: "Murex",
-      createdAt: new Date("2025-12-02").toISOString(),
-      userIds: ["user-2"],
-    },
-  ]);
-  
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: "user-1",
-      fullName: "Omar Halloum",
-      email: "omar@sefactory.com",
-      companyId: "company-1",
-      role: "recruiter",
-      createdAt: new Date("2025-12-02").toISOString(),
-    },
-    {
-      id: "user-2",
-      fullName: "Omar Halloum",
-      email: "omar@murex.com",
-      companyId: "company-2",
-      role: "recruiter",
-      createdAt: new Date("2025-12-02").toISOString(),
-    },
-  ]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const addJob = (jobData: Omit<Job, "id" | "createdAt" | "status">): string => {
     const newJob: Job = {
@@ -211,6 +100,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     };
     setJobs((prev) => [...prev, newJob]);
     return newJob.id;
+  };
+
+  const setJobsFromAPI = (apiJobs: Job[]) => {
+    setJobs(apiJobs);
   };
 
   const addCandidates = (
@@ -226,12 +119,24 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setCandidates((prev) => [...prev, ...newCandidates]);
   };
 
-  const updateCandidateStage = (candidateId: string, newStage: string) => {
-    setCandidates((prev) =>
-      prev.map((candidate) =>
-        candidate.id === candidateId ? { ...candidate, stage: newStage } : candidate
-      )
-    );
+  const updateCandidateStage = async (candidateId: string, newStage: string, jobId?: string) => {
+    try {
+      if (jobId) {
+        await candidateAPI.updateCandidateStage(candidateId, jobId, newStage);
+      }
+      setCandidates((prev) =>
+        prev.map((candidate) =>
+          candidate.id === candidateId ? { ...candidate, stage: newStage } : candidate
+        )
+      );
+    } catch (error) {
+      setCandidates((prev) =>
+        prev.map((candidate) =>
+          candidate.id === candidateId ? { ...candidate, stage: newStage } : candidate
+        )
+      );
+      throw error;
+    }
   };
 
   const updateCandidateInterviewNotes = (candidateId: string, notes: string) => {
@@ -242,10 +147,43 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const getCandidatesByStage = (jobId: string, stage: string): Candidate[] => {
-    return candidates.filter(
-      (candidate) => candidate.jobId === jobId && candidate.stage === stage
-    );
+  const getCandidatesByStage = async (jobId: string, stage: string): Promise<Candidate[]> => {
+    const numericJobId = Number(jobId);
+
+    // If jobId is not a valid number (e.g. local test jobs), skip API and use local data
+    if (!jobId || Number.isNaN(numericJobId)) {
+      return candidates.filter(
+        (candidate) => candidate.jobId === jobId && candidate.stage === stage
+      );
+    }
+
+    try {
+      // Try to fetch from API first
+      const apiCandidates = await candidateAPI.getCandidatesByJob(numericJobId, stage);
+      // Transform API response to frontend format
+      return apiCandidates.map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        email: c.email,
+        stage: c.stage,
+        jobId: String(c.jobId ?? numericJobId),
+        age: c.age,
+        location: c.location,
+        level: c.level,
+        linkedin: c.linkedin,
+        github: c.github,
+        phone: c.phone,
+        recruiter: c.recruiter,
+        recruiterEmail: c.recruiterEmail,
+        internalNotes: c.internalNotes,
+        appliedDate: c.appliedDate,
+      }));
+    } catch (error) {
+      // Fallback to local data
+      return candidates.filter(
+        (candidate) => candidate.jobId === jobId && candidate.stage === stage
+      );
+    }
   };
 
   const getPipelineStages = (jobId: string): PipelineStage[] => {
@@ -274,6 +212,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return newCompany.id;
   };
 
+  const setCompaniesFromAPI = (apiCompanies: any[] | Company[]) => {
+    // Check if data is already transformed or raw API data
+    const transformedCompanies: Company[] = apiCompanies.map((c: any) => {
+      // If already transformed Company type, return as is
+      if (c.id && c.name && Array.isArray(c.userIds)) {
+        return c as Company;
+      }
+      
+      // Otherwise transform from raw API data
+      return {
+        id: String(c.id),
+        name: c.name,
+        createdAt: c.created_at || c.createdAt || new Date().toISOString(),
+        userIds: c.users ? c.users.map((u: any) => String(u.id)) : [],
+      };
+    });
+    setCompanies(transformedCompanies);
+  };
+
   const addUser = (userData: Omit<User, "id" | "createdAt">): string => {
     const newUser: User = {
       ...userData,
@@ -294,8 +251,35 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return newUser.id;
   };
 
+  const setUsersFromAPI = (apiUsers: any[] | User[]) => {
+    // Check if data is already transformed (has fullName) or raw API data (has name)
+    const transformedUsers: User[] = apiUsers.map((u: any) => {
+      // If already transformed User type, return as is
+      if (u.fullName && u.companyId !== undefined) {
+        return u as User;
+      }
+      
+      // Otherwise transform from raw API data
+      const companyId = u.companyId !== null && u.companyId !== undefined 
+        ? String(u.companyId) 
+        : (u.company_id !== null && u.company_id !== undefined ? String(u.company_id) : '');
+      
+      return {
+        id: String(u.id),
+        fullName: u.name || u.fullName || 'Unknown User',
+        email: u.email || '',
+        companyId: companyId,
+        role: (u.role || 'recruiter') as "recruiter" | "interviewer",
+        createdAt: u.createdAt || u.created_at || new Date().toISOString(),
+      };
+    });
+    setUsers(transformedUsers);
+  };
+
   const getUsersByCompany = (companyId: string): User[] => {
-    return users.filter((user) => user.companyId === companyId);
+    // Ensure both sides are strings for comparison
+    const normalizedCompanyId = String(companyId);
+    return users.filter((user) => user.companyId && String(user.companyId) === normalizedCompanyId);
   };
 
   const deleteCompany = (companyId: string) => {
@@ -335,10 +319,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         getAllCandidatesForJob,
         updateJobStatus,
         addCompany,
+        setCompanies: setCompaniesFromAPI,
         addUser,
+        setUsers: setUsersFromAPI,
         getUsersByCompany,
         deleteCompany,
         deleteUser,
+        setJobsFromAPI,
       }}
     >
       {children}

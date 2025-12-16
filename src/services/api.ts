@@ -1,315 +1,260 @@
-// API Service for backend communication
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+interface ApiResponse<T> {
+  status: "success" | "failure" | "Validation failed";
+  payload: T;
+}
 
-// Get auth token from localStorage
-const getAuthToken = (): string | null => {
-  return localStorage.getItem('auth_token');
-};
-
-// Helper function to make API requests
-const apiRequest = async <T>(
+async function apiRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
-): Promise<T> => {
-  const token = getAuthToken();
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    ...(options.headers as Record<string, string>),
-  };
+  options: RequestInit = {},
+  requireAuth: boolean = true
+): Promise<T> {
+  const token = localStorage.getItem("token");
+  
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      ...(requireAuth && token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+  });
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  // Handle empty responses (like 204 No Content)
+  const contentType = response.headers.get("content-type");
+  if (!contentType || !contentType.includes("application/json")) {
+    if (response.ok) {
+      return {} as T;
+    }
+    throw new Error(`API request failed: ${response.statusText}`);
   }
 
-  const url = `${API_BASE_URL}${endpoint}`;
+  const data: ApiResponse<T> = await response.json();
 
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers,
-      mode: 'cors',
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'An error occurred' }));
-
-      // Handle Laravel response format: {status, payload}
-      const rawPayload = errorData.payload ?? errorData.message ?? errorData;
-
-      let errorMessage: string;
-      if (typeof rawPayload === 'string') {
-        errorMessage = rawPayload;
-      } else if (rawPayload && typeof rawPayload === 'object') {
-        // Validation errors or structured error objects
-        errorMessage = JSON.stringify(rawPayload);
-      } else {
-        errorMessage = `HTTP error! status: ${response.status}`;
-      }
-
-      throw new Error(errorMessage);
-    }
-
-    const data = await response.json();
-    // Handle Laravel response format: {status: "success", payload: {...}}
-    // Return payload if it exists, otherwise return the whole response
-    if (data.payload !== undefined) {
-      return data.payload;
-    }
-    return data;
-  } catch (error: any) {
-    // If it's a network error (CORS, connection refused, etc.)
-    if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
-      throw new Error('Cannot connect to server. Please make sure the backend server is running on http://localhost:8000');
-    }
-    throw error;
+  // Check response status
+  if (data.status === "failure" || data.status === "Validation failed") {
+    const errorMessage = typeof data.payload === "string" 
+      ? data.payload 
+      : JSON.stringify(data.payload);
+    throw new Error(errorMessage);
   }
-};
 
-// Candidate API functions
+  if (!response.ok) {
+    const errorMessage = typeof data.payload === "string" 
+      ? data.payload 
+      : `API request failed: ${response.statusText}`;
+    throw new Error(errorMessage);
+  }
+
+  // Return the payload from the response
+  return data.payload;
+}
+
+// Candidate API
+interface CreateCandidateData {
+  full_name: string;
+  email: string;
+  job_id: string | number;
+  stage?: string;
+  recruiter_id?: string | number;
+  level?: string;
+  age?: number;
+  phone_number?: string;
+  location?: string;
+  github_url?: string;
+  linkedin_url?: string;
+  source?: string;
+}
+
+interface BulkImportData {
+  jobId: string | number;
+  recruiterId: string | number;
+  candidates: Array<{
+    name: string;
+    email: string;
+  }>;
+}
+
 export const candidateAPI = {
-  // Get candidates by job ID and optionally by stage name
-  getCandidatesByJob: async (jobId: string | number, stageName?: string): Promise<any[]> => {
+  async getCandidatesByJob(jobId: string, stage?: string): Promise<any[]> {
+    // Route: GET /v1/candidates/job/{jobId}
+    // Query params: stage_name (optional), per_page (optional), page (optional)
+    let endpoint = `/v1/candidates/job/${jobId}`;
     const params = new URLSearchParams();
-    if (stageName) {
-      params.append('stage_name', stageName);
+    if (stage) {
+      params.append("stage_name", stage);
     }
     const queryString = params.toString();
-    const url = `/v1/candidates/job/${jobId}${queryString ? `?${queryString}` : ''}`;
-    return apiRequest<any[]>(url);
+    if (queryString) {
+      endpoint += `?${queryString}`;
+    }
+    return apiRequest<any[]>(endpoint);
   },
 
-  // Get candidate profile
-  getCandidateProfile: async (candidateId: string | number, jobId?: string | number): Promise<any> => {
-    const params = new URLSearchParams();
+  async getCandidateProfile(candidateId: string, jobId?: string): Promise<any> {
+    // Route: GET /v1/candidates/{candidateId}/profile
+    // Query params: job_id (optional)
+    let endpoint = `/v1/candidates/${candidateId}/profile`;
     if (jobId) {
-      params.append('job_id', jobId.toString());
+      endpoint += `?job_id=${jobId}`;
     }
-    const queryString = params.toString();
-    const url = `/v1/candidates/${candidateId}/profile${queryString ? `?${queryString}` : ''}`;
-    return apiRequest<any>(url);
+    return apiRequest<any>(endpoint);
   },
 
+  async createCandidate(data: CreateCandidateData): Promise<any> {
+    // Route: POST /v1/candidates
+    return apiRequest<any>("/v1/candidates", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
 
-  // Update candidate stage
-  updateCandidateStage: async (
-    candidateId: string | number,
-    jobId: string | number,
-    stage: string
-  ): Promise<any> => {
+  async updateCandidateStage(candidateId: string, jobId: string, stage: string): Promise<any> {
+    // Route: POST /v1/candidates/{candidateId}/update-stage
     return apiRequest<any>(`/v1/candidates/${candidateId}/update-stage`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ job_id: jobId, stage }),
     });
   },
 
-  // Bulk import candidates from Excel file
-  bulkImportCandidates: async (file: File): Promise<any> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const token = getAuthToken();
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-    
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const url = `${API_BASE_URL}/import-excel-n8n`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: formData,
-      mode: 'cors',
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'An error occurred' }));
-      const rawPayload = errorData.payload ?? errorData.message ?? errorData;
-      let errorMessage: string;
-      if (typeof rawPayload === 'string') {
-        errorMessage = rawPayload;
-      } else if (rawPayload && typeof rawPayload === 'object') {
-        errorMessage = JSON.stringify(rawPayload);
-      } else {
-        errorMessage = `HTTP error! status: ${response.status}`;
-      }
-      throw new Error(errorMessage);
-    }
-
-    const data = await response.json();
-    if (data.payload !== undefined) {
-      return data.payload;
-    }
-    return data;
-  },
-
-  // Create a single candidate
-  createCandidate: async (data: {
-    name: string;
-    email: string;
-    age?: number;
-    phone?: string;
-    location?: string;
-    level?: string;
-    github?: string;
-    linkedin?: string;
-    source?: string;
-    jobId: string | number;
-    stage?: string;
-    recruiterId?: string | number;
-  }): Promise<any> => {
-    return apiRequest<any>('/v1/candidates', {
-      method: 'POST',
-      body: JSON.stringify({
-        full_name: data.name,
-        email: data.email,
-        age: data.age,
-        phone_number: data.phone,
-        location: data.location,
-        level: data.level,
-        github_url: data.github,
-        linkedin_url: data.linkedin,
-        source: data.source,
-        job_id: data.jobId,
-        stage: data.stage || 'applied', // Use lowercase to match backend expectations
-        recruiter_id: data.recruiterId,
-      }),
-    });
+  async bulkImportCandidates(data: BulkImportData): Promise<any> {
+    // Route: POST /import-excel-n8n (no auth required)
+    return apiRequest<any>("/import-excel-n8n", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }, false);
   },
 };
 
-
-// Job API functions
+// Job API
 export const jobAPI = {
-  // Get jobs by company ID
-  getJobsByCompanyId: async (companyId: string | number): Promise<any[]> => {
-    return apiRequest<any[]>(`/companyJobs/${companyId}`);
+  async createJob(data: any): Promise<any> {
+    // Route: POST /addJob (no auth required)
+    return apiRequest<any>("/addJob", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }, false);
   },
 
-  // Create a new job with pipeline, skills, and criteria
-  createJob: async (data: any): Promise<any> => {
-    return apiRequest<any>('/addJob', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+  async getJobsByCompanyId(companyId: string): Promise<any[]> {
+    // Route: GET /companyJobs/{companyId} (no auth required)
+    // Response: { status: "success", payload: { data: [...], path: "...", per_page: 20, next_cursor: "..." } }
+    const response = await apiRequest<{ data: any[] }>(`/companyJobs/${companyId}`, {}, false);
+    return response.data || [];
   },
 
-  // Update an existing job (e.g. status)
-  updateJob: async (id: string | number, data: any): Promise<any> => {
-    return apiRequest<any>(`/updateJob/${id}`, {
-      method: 'POST',
+  async updateJob(jobId: string, data: any): Promise<any> {
+    // Route: POST /updateJob/{id} (no auth required)
+    return apiRequest<any>(`/updateJob/${jobId}`, {
+      method: "POST",
       body: JSON.stringify(data),
-    });
+    }, false);
   },
 };
 
-// Auth API functions
+// Auth API
 export const authAPI = {
-  // Login
-  login: async (email: string, password: string): Promise<{ user: any; token: string }> => {
-    const response = await apiRequest<{ user: any; token: string }>('/login', {
-      method: 'POST',
+  async login(email: string, password: string): Promise<{ user: any; token: string }> {
+    // Route: POST /login (no auth required)
+    // Response: { status: "success", payload: { user: {...}, token: "..." } }
+    const payload = await apiRequest<{ user: any; token: string }>("/login", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
-    });
-    // Store token in localStorage
-    if (response.token) {
-      localStorage.setItem('auth_token', response.token);
+    }, false);
+    
+    if (!payload || !payload.user) {
+      throw new Error("Invalid login response: user data not found");
     }
-    return response;
+    
+    // Store token if provided
+    if (payload.token) {
+      localStorage.setItem("token", payload.token);
+    }
+    
+    return payload;
   },
 
-};
-
-// Company API functions
-export const companyAPI = {
-  // Get all companies
-  getAllCompanies: async (): Promise<any[]> => {
-    return apiRequest<any[]>('/v1/companies');
-  },
-
-  // Create company
-  createCompany: async (name: string): Promise<any> => {
-    return apiRequest<any>('/v1/companies', {
-      method: 'POST',
-      body: JSON.stringify({ name }),
+  async logout(): Promise<any> {
+    // Route: POST /v1/logout (auth required)
+    return apiRequest<any>("/v1/logout", {
+      method: "POST",
     });
   },
-
 };
 
-// User API functions
+// User API
 export const userAPI = {
-  // Get all users
-  getAllUsers: async (): Promise<any[]> => {
-    return apiRequest<any[]>('/v1/users');
+  async getAllUsers(): Promise<any[]> {
+    // Route: GET /v1/users (auth required)
+    return apiRequest<any[]>("/v1/users");
   },
 
-  // Get users by company
-  getUsersByCompany: async (companyId: string | number): Promise<any[]> => {
+  async getUsersByCompany(companyId: string): Promise<any[]> {
+    // Route: GET /v1/users/company/{companyId} (auth required)
     return apiRequest<any[]>(`/v1/users/company/${companyId}`);
   },
 
-  // Create user
-  createUser: async (data: {
+  async createUser(data: {
     name: string;
     email: string;
     password: string;
-    company_id?: string | number;
-    role: 'recruiter' | 'interviewer';
-  }): Promise<any> => {
-    return apiRequest<any>('/v1/users', {
-      method: 'POST',
+    company_id: string;
+    role: "recruiter" | "interviewer";
+  }): Promise<any> {
+    // Route: POST /v1/users (auth required)
+    return apiRequest<any>("/v1/users", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
-
 };
 
-// Skill API functions
-export const skillAPI = {
-  // Get all skills
-  getAllSkills: async (): Promise<any[]> => {
-    return apiRequest<any[]>('/v1/skills');
+// Company API
+export const companyAPI = {
+  async getAllCompanies(): Promise<any[]> {
+    // Route: GET /v1/companies (auth required)
+    return apiRequest<any[]>("/v1/companies");
   },
-};
 
-// Stage API functions
-export const stageAPI = {
-  // Get all stages
-  getAllStages: async (): Promise<any[]> => {
-    return apiRequest<any[]>('/v1/stages');
-  },
-};
-
-// Interview API functions
-export const interviewAPI = {
-  // Update interview notes by candidate_id and job_id
-  updateInterviewNotes: async (candidateId: string | number, jobId: string | number, notes: string): Promise<any> => {
-    return apiRequest<any>('/v1/interviews/update-notes', {
-      method: 'POST',
-      body: JSON.stringify({
-        candidate_id: candidateId,
-        job_id: jobId,
-        notes: notes,
-      }),
+  async createCompany(name: string): Promise<any> {
+    // Route: POST /v1/companies (auth required)
+    return apiRequest<any>("/v1/companies", {
+      method: "POST",
+      body: JSON.stringify({ name }),
     });
   },
 };
 
-export default {
-  candidate: candidateAPI,
-  job: jobAPI,
-  auth: authAPI,
-  company: companyAPI,
-  user: userAPI,
-  skill: skillAPI,
-  stage: stageAPI,
-  interview: interviewAPI,
+// Stage API
+export const stageAPI = {
+  async getAllStages(): Promise<any[]> {
+    // Route: GET /v1/stages (auth required)
+    return apiRequest<any[]>("/v1/stages");
+  },
+};
+
+// Skill API
+export const skillAPI = {
+  async getAllSkills(): Promise<any[]> {
+    // Route: GET /v1/skills (auth required)
+    return apiRequest<any[]>("/v1/skills");
+  },
+};
+
+// Interview API
+export const interviewAPI = {
+  async updateInterviewNotes(
+    candidateId: string | number,
+    jobId: string | number,
+    notes: string
+  ): Promise<any> {
+    // Route: POST /v1/interviews/update-notes (auth required)
+    return apiRequest<any>("/v1/interviews/update-notes", {
+      method: "POST",
+      body: JSON.stringify({ candidate_id: candidateId, job_id: jobId, notes }),
+    });
+  },
 };
 

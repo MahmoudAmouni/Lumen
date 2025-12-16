@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { FiMinus, FiPlus, FiChevronUp, FiChevronDown } from "react-icons/fi";
 import styles from "../styles/CreateJob.module.css";
 
@@ -14,6 +13,8 @@ interface DynamicSectionProps {
   errors?: { name?: { message?: string } }[];
   fieldName: "pipeline" | "skills" | "criteria";
   getFieldValue?: (index: number) => string;
+  availableOptions?: { id: string; name: string }[];
+  isLoadingOptions?: boolean;
 }
 
 export default function DynamicSection({
@@ -26,32 +27,24 @@ export default function DynamicSection({
   register,
   errors,
   fieldName,
-  getFieldValue,
+  availableOptions,
+  isLoadingOptions,
 }: DynamicSectionProps) {
-  const permanentPipelineStages = ["Applied", "Interview", "Offer", "Rejected"];
-  
-  const canRemove = (index: number) => {
-    if (fields.length <= 1) return false;
-    if (fieldName === "pipeline" && getFieldValue) {
-      const fieldValue = getFieldValue(index);
-      return !permanentPipelineStages.includes(fieldValue);
-    }
-    return true;
-  };
+  const canRemove = () => fields.length > 1;
 
-  const canMoveUp = (index: number) => {
-    return index > 0 && onMoveUp !== undefined;
-  };
+  const canMoveUp = (index: number) =>
+    index > 0 && typeof onMoveUp === "function";
+  const canMoveDown = (index: number) =>
+    index < fields.length - 1 && typeof onMoveDown === "function";
 
-  const canMoveDown = (index: number) => {
-    return index < fields.length - 1 && onMoveDown !== undefined;
-  };
   return (
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>{title}</h2>
+
         <button type="button" onClick={onAdd} className={styles.addButton}>
-          <FiPlus size={16} /> Add {title.split(" ")[0]}
+          <FiPlus size={16} />
+          Add {title.split(" ")[0]}
         </button>
       </div>
 
@@ -69,6 +62,7 @@ export default function DynamicSection({
                 >
                   <FiChevronUp size={16} />
                 </button>
+
                 <button
                   type="button"
                   onClick={() => onMoveDown(index)}
@@ -80,21 +74,42 @@ export default function DynamicSection({
                 </button>
               </div>
             )}
-            
-            <input
-              {...register(`${fieldName}.${index}.name` as const, {
-                required: `${title.split(" ")[0]} name is required`,
-              })}
-              type="text"
-              placeholder={`Ex: ${
-                fieldName === "pipeline"
-                  ? "Technical Interview"
-                  : fieldName === "skills"
-                  ? "React"
-                  : "Communication"
-              }`}
-              className={styles.skillInput}
-            />
+
+            {availableOptions &&
+            availableOptions.length > 0 &&
+            (fieldName === "skills" || fieldName === "pipeline") ? (
+              <select
+                {...register(`${fieldName}.${index}.name` as const, {
+                  required: `${title.split(" ")[0]} name is required`,
+                })}
+                className={styles.skillInput}
+                disabled={isLoadingOptions}
+              >
+                <option value="">
+                  Select {fieldName === "skills" ? "Skill" : "Stage"}
+                </option>
+                {availableOptions.map((option) => (
+                  <option key={option.id} value={option.name}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                {...register(`${fieldName}.${index}.name` as const, {
+                  required: `${title.split(" ")[0]} name is required`,
+                })}
+                type="text"
+                placeholder={`Ex: ${
+                  fieldName === "pipeline"
+                    ? "Technical Interview"
+                    : fieldName === "skills"
+                    ? "React"
+                    : "Communication"
+                }`}
+                className={styles.skillInput}
+              />
+            )}
 
             {fieldName === "skills" && (
               <select
@@ -111,7 +126,7 @@ export default function DynamicSection({
               type="button"
               onClick={() => onRemove(index)}
               className={styles.removeButton}
-              disabled={!canRemove(index)}
+              disabled={!canRemove()}
               aria-label={`Remove ${fieldName.slice(0, -1)}`}
             >
               <FiMinus size={14} />

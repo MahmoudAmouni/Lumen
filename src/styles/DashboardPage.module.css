@@ -21,65 +21,21 @@
     margin-bottom: 40px;
 }
 
+.headerRowCompact {
+    margin-top: 16px;
+    margin-bottom: 28px;
+}
+
 .pageTitle {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 32px;
     font-weight: 600;
     line-height: 39px;
-    color: #FFFFFF;
+    color: var(--color-prm-txt);
     margin: 0;
 }
 
-.filterContainer {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.filterLabel {
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 19px;
-    color: #FFFFFF;
-}
-
-.selectWrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.jobSelect {
-    box-sizing: border-box;
-    background-color: #1F2937;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: #F9FAFB;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 100%;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 176px;
-    height: 40px;
-    padding-right: 40px;
-}
-
-.dropdownIcon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #F9FAFB;
-    pointer-events: none;
-    width: 10px;
-    height: 5px;
-}
-
+/* cards grid */
 .pipelineGrid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -87,24 +43,38 @@
     width: 100%;
 }
 
+/* stage card (same sizing, just token colors) */
 .stageCard {
     box-sizing: border-box;
-    background-color: #1F2937;
-    border: 1px solid rgba(188, 188, 188, 0.99);
+
+    background-color: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 35%, transparent);
     border-radius: 8px;
+
     padding: 32px 24px;
+    min-height: 160px;
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 160px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    width: 100%;
+
+    cursor: pointer;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .stageCard:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+    border-color: color-mix(in srgb, var(--color-btn) 35%, transparent);
+}
+
+.stageCard:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
+    border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
 }
 
 .stageContent {
@@ -116,31 +86,46 @@
 }
 
 .stageLabel {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 24px;
     font-weight: 400;
     line-height: 28px;
     margin: 0;
 }
 
+/* tone colors (no hard-coded hex) */
+.tone_primary {
+    color: var(--color-btn);
+}
+
+.tone_success {
+    color: color-mix(in srgb, var(--color-btn) 60%, var(--cta-bg));
+}
+
+.tone_danger {
+    color: color-mix(in srgb, var(--color-sec-txt) 60%, var(--color-prm-txt));
+}
+
 .stageCount {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 32px;
     font-weight: 400;
     line-height: 38px;
     text-align: center;
-    color: #F9FAFB;
+    color: var(--color-prm-txt);
     margin: 0;
 }
 
-.noJobSelected,
-.noStages {
+/* empty states */
+.emptyState {
     padding: 40px;
     text-align: center;
-    color: #A6AAAF;
-    font-family: 'Inter', sans-serif;
+    color: var(--color-sec-txt);
+    font-family: "Inter", sans-serif;
     font-size: 18px;
-    background-color: #1F2937;
+
+    background-color: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
     border-radius: 8px;
     margin-top: 20px;
 }
@@ -171,20 +156,6 @@
         align-items: flex-start;
         gap: 16px;
         margin-bottom: 32px;
-    }
-
-    .filterContainer {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-    }
-
-    .selectWrapper {
-        width: 100%;
-    }
-
-    .jobSelect {
-        width: 100%;
     }
 
     .pipelineGrid {

@@ -1,10 +1,19 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Header from "../components/Header";
+import AdminSidebar from "../components/admin/AdminSidebar";
+import CompanyUsersModal from "../components/CompanyUsersModal";
 import styles from "../styles/AdminDashboard.module.css";
+
 import { useData } from "../context/DataContext";
+import { useCompanies } from "../hooks/useCompanies";
+import { useUsers } from "../hooks/useUsers";
+import { useCreateCompany } from "../hooks/useCreateCompany";
+import { useCreateUser } from "../hooks/useCreateUser";
 
-
+import AddCompanyCard from "../components/admin/AddCompanyCard";
+import AddUserCard from "../components/admin/AddUserCard";
+import CompaniesTableCard from "../components/admin/CompaniesTableCard";
 
 type Company = { id: string; name: string; createdAt: string };
 
