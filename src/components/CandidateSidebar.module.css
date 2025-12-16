@@ -3,86 +3,164 @@
     top: 0;
     left: 0;
     width: 249px;
+    /* ✅ keep same */
     height: 100vh;
-    background-color: #1F2937;
+
+    background: var(--color-sidebar);
+    border-right: 1px solid color-mix(in srgb, var(--color-prm-txt) 12%, transparent);
+
     display: flex;
     flex-direction: column;
     z-index: 100;
 }
 
 .sidebarHeader {
-    padding: 14px 16px;
+    padding: 18px 18px 14px;
+    /* matches main rhythm */
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    user-select: none;
 }
 
 .logo {
-    width: 55px;
-    height: 55px;
+    width: 42px;
+    /* ✅ match main sidebar */
+    height: 42px;
     object-fit: contain;
     flex-shrink: 0;
 }
 
+.brandText {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
 .logoText {
-    font-family: 'Inter', sans-serif;
-    font-size: 30px;
-    font-weight: 700;
-    line-height: 36px;
-    color: #4A90E2;
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 850;
+    letter-spacing: -0.4px;
+    color: var(--color-btn);
+}
+
+.logoSubText {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 2px;
+    color: color-mix(in srgb, var(--color-prm-txt) 65%, transparent);
 }
 
 .navMenu {
-    padding: 0;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    padding: 8px 10px;
+    display: grid;
+    gap: 6px;
 }
 
 .navItem {
-    padding: 11px 30px;
-    margin: 0 16px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 22px;
-    color: #FFFFFF;
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+
     height: 40px;
+    padding: 8px 10px;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13.5px;
+    font-weight: 650;
+    color: color-mix(in srgb, var(--color-prm-txt) 85%, transparent);
+
+    transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+    text-align: left;
 }
 
 .navItem:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--color-prm-txt) 6%, transparent);
+    transform: translateY(-1px);
 }
 
-.navItem.active {
-    background-color: #4A90E2;
-    color: #FFFFFF;
-    border-radius: 8px;
+.navItem:focus-visible {
+    outline: none;
+    border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
 }
 
+.navIcon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+
+    background: color-mix(in srgb, var(--color-prm-txt) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-prm-txt) 10%, transparent);
+
+    color: color-mix(in srgb, var(--color-prm-txt) 90%, transparent);
+    flex-shrink: 0;
+}
+
+.navIcon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.navLabel {
+    display: inline-block;
+}
+
+.active {
+    background: color-mix(in srgb, var(--color-btn) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-btn) 26%, transparent);
+    color: var(--color-prm-txt);
+    position: relative;
+}
+
+.active::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 999px;
+    background: var(--color-btn);
+}
+
+.active .navIcon {
+    background: color-mix(in srgb, var(--color-btn) 18%, transparent);
+    border-color: color-mix(in srgb, var(--color-btn) 28%, transparent);
+}
+
+/* responsive */
 @media (max-width: 768px) {
     .sidebar {
         width: 60px;
+        /* ✅ keep same */
     }
 
-    .logoText {
+    .brandText {
         display: none;
     }
 
-    .navItem span {
+    .navLabel {
         display: none;
     }
 
     .navItem {
         justify-content: center;
+        padding: 10px;
+    }
+
+    .active::before {
+        left: -8px;
     }
 }
-

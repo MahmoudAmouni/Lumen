@@ -1,44 +1,58 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+
+  background: color-mix(in srgb, var(--color-bg) 35%, #000);
   display: flex;
   align-items: center;
   justify-content: center;
+
   z-index: 1000;
 }
 
 .card {
-  background-color: #1F2937;
+  background-color: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
   border-radius: 12px;
+
   padding: 32px;
   max-width: 500px;
   width: 90%;
+
   position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+  box-shadow: 0 18px 50px color-mix(in srgb, var(--color-prm-txt) 22%, transparent);
 }
 
 .closeButton {
   position: absolute;
   top: 16px;
   right: 16px;
+
   background: transparent;
-  border: none;
-  color: #F9FAFB;
+  border: 1px solid transparent;
+  color: var(--color-prm-txt);
+
   cursor: pointer;
   padding: 8px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+
+  border-radius: 8px;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .closeButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--color-card) 60%, transparent);
+  border-color: color-mix(in srgb, var(--color-sec-txt) 20%, transparent);
+}
+
+.closeButton:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
 }
 
 .candidateInfo {
@@ -46,54 +60,60 @@
 }
 
 .candidateName {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 24px;
   font-weight: 700;
   line-height: 32px;
-  color: #FFFFFF;
+
+  color: var(--color-prm-txt);
   margin: 0 0 12px 0;
 }
 
 .candidateEmail {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
-  color: #D1D5DB;
+
+  color: var(--color-sec-txt);
   margin: 0 0 8px 0;
 }
 
 .candidateDetail {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  color: #9CA3AF;
+
+  color: var(--color-sec-txt);
   margin: 4px 0;
 }
 
 .notesSection {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
 }
 
 .notesTitle {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 20px;
-  color: #FFFFFF;
+
+  color: var(--color-prm-txt);
   margin: 0 0 8px 0;
 }
 
 .notesText {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  color: #D1D5DB;
+
+  color: var(--color-sec-txt);
   margin: 0;
+
   white-space: pre-wrap;
   word-wrap: break-word;
 }
@@ -104,45 +124,59 @@
   gap: 12px;
 }
 
+/* base button */
 .terminateButton,
 .viewProfileButton,
 .nextStageButton {
   width: 100%;
   padding: 12px 24px;
-  border: none;
+
   border-radius: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+
+  border: 1px solid transparent;
 }
 
+/* "Reject" – keep destructive feel without hardcoding red */
 .terminateButton {
-  background-color: #E24A4A;
-  color: #FFFFFF;
+  background: color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  color: var(--color-prm-txt);
+  border-color: color-mix(in srgb, var(--color-sec-txt) 28%, transparent);
 }
 
 .terminateButton:hover {
-  background-color: #C73A3A;
+  transform: translateY(-1px);
+  opacity: 0.95;
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
 }
 
+/* primary actions */
 .viewProfileButton {
-  background-color: #60A5FA;
-  color: #FFFFFF;
+  background-color: var(--color-btn);
+  color: var(--btn-txt);
+  border-color: color-mix(in srgb, var(--color-btn) 70%, transparent);
 }
 
 .viewProfileButton:hover {
-  background-color: #4a90e2;
+  transform: translateY(-1px);
+  opacity: 0.95;
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
 }
 
 .nextStageButton {
-  background-color: #4A90E2;
-  color: #FFFFFF;
+  background: color-mix(in srgb, var(--color-btn) 18%, transparent);
+  color: var(--color-prm-txt);
+  border-color: color-mix(in srgb, var(--color-btn) 28%, transparent);
 }
 
 .nextStageButton:hover:not(:disabled) {
-  background-color: #3a7bc2;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
 }
 
 .nextStageButton:disabled {
@@ -160,4 +194,3 @@
     font-size: 20px;
   }
 }
-

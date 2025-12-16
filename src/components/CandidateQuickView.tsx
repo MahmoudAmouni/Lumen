@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import styles from "./CandidateQuickView.module.css";
 import { useData } from "../context/DataContext";
 import type { Candidate, Job } from "../context/DataContext";
@@ -10,7 +11,11 @@ interface CandidateQuickViewProps {
   onClose: () => void;
 }
 
-export default function CandidateQuickView({ candidate, job, onClose }: CandidateQuickViewProps) {
+export default function CandidateQuickView({
+  candidate,
+  job,
+  onClose,
+}: CandidateQuickViewProps) {
   const navigate = useNavigate();
   const { updateCandidateStage, getPipelineStages } = useData();
 
@@ -18,8 +23,7 @@ export default function CandidateQuickView({ candidate, job, onClose }: Candidat
   const currentStageIndex = pipelineStages.findIndex(
     (stage) => stage.name.toLowerCase() === candidate.stage.toLowerCase()
   );
-  
-  // Find next stage (skip "Rejected" as it's a terminal stage)
+
   let nextStage = null;
   if (currentStageIndex >= 0) {
     for (let i = currentStageIndex + 1; i < pipelineStages.length; i++) {
@@ -29,53 +33,84 @@ export default function CandidateQuickView({ candidate, job, onClose }: Candidat
       }
     }
   }
-  
+
   const isRejected = candidate.stage.toLowerCase() === "rejected";
 
-  const handleTerminate = () => {
+  const handleTerminate = async () => {
     if (window.confirm(`Are you sure you want to reject ${candidate.name}?`)) {
-      // Find Rejected stage in pipeline
       const rejectedStage = pipelineStages.find(
         (stage) => stage.name.toLowerCase() === "rejected"
       );
-      if (rejectedStage) {
-        updateCandidateStage(candidate.id, rejectedStage.name);
-      } else {
-        updateCandidateStage(candidate.id, "Rejected");
+      try {
+        await updateCandidateStage(
+          candidate.id,
+          rejectedStage?.name ?? "Rejected",
+          candidate.jobId
+        );
+        onClose();
+      } catch {
+        toast.error("Failed to update candidate stage. Please try again.");
       }
-      onClose();
     }
   };
 
   const handleViewProfile = () => {
-    navigate(`/candidate-detail?candidateId=${encodeURIComponent(candidate.id)}&jobId=${encodeURIComponent(job.id)}`);
+    navigate(
+      `/candidate-detail?candidateId=${encodeURIComponent(
+        candidate.id
+      )}&jobId=${encodeURIComponent(job.id)}`
+    );
     onClose();
   };
 
-  const handleNextStage = () => {
-    if (nextStage) {
-      updateCandidateStage(candidate.id, nextStage.name);
+  const handleNextStage = async () => {
+    if (!nextStage) return;
+    try {
+      await updateCandidateStage(candidate.id, nextStage.name, candidate.jobId);
       onClose();
+    } catch {
+      toast.error("Failed to update candidate stage. Please try again.");
     }
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div
+      className={styles.overlay}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Candidate quick view"
+    >
       <div className={styles.card} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Close"
+          type="button"
+        >
           <FiX size={20} />
         </button>
 
         <div className={styles.candidateInfo}>
           <h2 className={styles.candidateName}>{candidate.name}</h2>
           <p className={styles.candidateEmail}>{candidate.email}</p>
-          {candidate.age && <p className={styles.candidateDetail}>Age: {candidate.age}</p>}
-          {candidate.location && <p className={styles.candidateDetail}>Location: {candidate.location}</p>}
-          {candidate.level && (
+
+          {candidate.age && (
+            <p className={styles.candidateDetail}>Age: {candidate.age}</p>
+          )}
+          {candidate.location && (
             <p className={styles.candidateDetail}>
-              Level: {candidate.level.charAt(0).toUpperCase() + candidate.level.slice(1)}
+              Location: {candidate.location}
             </p>
           )}
+          {candidate.level && (
+            <p className={styles.candidateDetail}>
+              Level:{" "}
+              {candidate.level.charAt(0).toUpperCase() +
+                candidate.level.slice(1)}
+            </p>
+          )}
+
           {candidate.interviewNotes && (
             <div className={styles.notesSection}>
               <h3 className={styles.notesTitle}>Interview Notes</h3>
@@ -85,22 +120,36 @@ export default function CandidateQuickView({ candidate, job, onClose }: Candidat
         </div>
 
         <div className={styles.actions}>
-          <button className={styles.terminateButton} onClick={handleTerminate}>
-            Terminate
+          <button
+            className={styles.terminateButton}
+            onClick={handleTerminate}
+            type="button"
+          >
+            Reject
           </button>
-          <button className={styles.viewProfileButton} onClick={handleViewProfile}>
+
+          <button
+            className={styles.viewProfileButton}
+            onClick={handleViewProfile}
+            type="button"
+          >
             View Profile
           </button>
+
           <button
             className={styles.nextStageButton}
             onClick={handleNextStage}
             disabled={!nextStage || isRejected}
+            type="button"
           >
-            {isRejected ? "Already Rejected" : nextStage ? `Go to ${nextStage.name}` : "No Next Stage"}
+            {isRejected
+              ? "Already Rejected"
+              : nextStage
+              ? `Go to ${nextStage.name}`
+              : "No Next Stage"}
           </button>
         </div>
       </div>
     </div>
   );
 }
-
