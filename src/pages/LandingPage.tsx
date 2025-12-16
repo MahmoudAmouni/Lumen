@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/LandingPage.module.css";
 import  Footer  from "../components/Footer";
 import logo from "../assets/lumen-logo.png";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 export const LandingPage = () => {
+    const navigate = useNavigate();
+
+    const handleLoginClick = () => {
+        navigate("/login");
+    };
+
     return (
         <div className={styles.landingContainer}>
             <header className={styles.landingHeader}>
@@ -18,7 +25,7 @@ export const LandingPage = () => {
 
                 <div className={styles.headerActions}>
                     <ThemeToggle />
-                    <button className={styles.headerLoginBtn}>Login</button>
+                    <button className={styles.headerLoginBtn} onClick={handleLoginClick}>Login</button>
                 </div>
             </header>
 
@@ -35,7 +42,7 @@ export const LandingPage = () => {
                 </p>
 
                 <div className={styles.heroButtons}>
-                    <button className={styles.primaryBtn}>Login</button>
+                    <button className={styles.primaryBtn} onClick={handleLoginClick}>Login</button>
                     <button className={styles.secondaryBtn}>Contact Us</button>
                 </div>
 

@@ -119,6 +119,37 @@
     align-items: center;
 }
 
+.orderButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.orderButton {
+    background-color: var(--color-card);
+    color: var(--color-prm-txt);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.orderButton:hover:not(:disabled) {
+    background-color: rgba(96, 165, 250, 0.2);
+    border-color: #60A5FA;
+}
+
+.orderButton:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
 .skillInput {
     flex-grow: 1;
     padding: 10px;

@@ -9,8 +9,6 @@ import CandidateDetail from "../pages/CandidateDetail";
 import AICopilot from "../pages/AICopilot";
 import InterviewNotes from "../pages/InterviewNotes";
 import AdminDashboard from "../pages/AdminDashboard";
-import JobDetail from "../pages/JobDetail";
-import NotFound from "../pages/NotFound";
 
 export const AppRouter = () => {
   return (
@@ -26,8 +24,7 @@ export const AppRouter = () => {
         <Route path="/candidate-detail" element={<CandidateDetail />} />
         <Route path="/ai-copilot" element={<AICopilot />} />
         <Route path="/interview-notes" element={<InterviewNotes />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
