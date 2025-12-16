@@ -8,23 +8,19 @@ interface UpdateJobStatusInput {
   status: Job["status"];
 }
 
-// Hook to update a job's status and refresh the jobs list
 export const useUpdateJobStatus = (companyId: string | null) => {
   const queryClient = useQueryClient();
 
   return useMutation<Job, Error, UpdateJobStatusInput>({
-    mutationFn: async ({ jobId, status }: UpdateJobStatusInput) => {
-      return updateJobStatus(jobId, status);
-    },
+    mutationFn: ({ jobId, status }: UpdateJobStatusInput) => updateJobStatus(jobId, status),
     onSuccess: () => {
-      // Refetch jobs for this company so UI stays in sync
       if (companyId) {
         queryClient.invalidateQueries({ queryKey: ["jobs", companyId] });
       }
       toast.success("Job status updated");
     },
     onError: (err: any) => {
-      const message = err?.message || "Failed to update job status";
+      const message = err?.message || "Failed to update job status. Please try again.";
       toast.error(message);
     },
   });

@@ -16,8 +16,26 @@ export default function Header({ title, actions, centered }: HeaderProps) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // keep your current behavior
-    navigate("/");
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api"}/v1/logout`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }).catch(() => {});
+      }
+    } catch (error) {
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("company_id");
+      localStorage.removeItem("user_name");
+      localStorage.removeItem("user_email");
+      navigate("/login", { replace: true });
+    }
   };
 
   return (

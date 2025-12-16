@@ -2,7 +2,8 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
 
     /* keep your layout; just make it consistent with sidebar width */
     margin-left: 260px;
@@ -12,7 +13,9 @@
     padding: 20px;
     flex-grow: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: var(--color-bg);
+    height: 100%;
 }
 
 .pageHeader {

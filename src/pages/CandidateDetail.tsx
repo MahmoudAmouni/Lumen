@@ -4,6 +4,7 @@ import styles from "../styles/CandidateDetail.module.css";
 import { useSearchParams } from "react-router-dom";
 import { useData } from "../context/DataContext";
 import { useCandidateProfile } from "../hooks/useCandidateProfile";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import CandidateStateCard from "../components/candidate/CandidateStateCard.tsx";
 import CandidateHeaderCard from "../components/candidate/CandidateHeaderCard.tsx";
@@ -48,7 +49,12 @@ export default function CandidateDetail() {
         <div className={styles.main}>
           <Header title="Candidate Overview" />
           <div className={styles.pageContent}>
-            <CandidateStateCard message="Loading candidate profile..." />
+            <div className={styles.stateCard}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "20px" }}>
+                <ClipLoader size={24} color={"var(--color-btn)"} />
+                <span>Loading candidate profile...</span>
+              </div>
+            </div>
           </div>
         </div>
       </>

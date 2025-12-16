@@ -21,9 +21,8 @@ export const useCreateCandidate = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateCandidateData) => {
-      // Map frontend field names to backend API field names
-      return candidateAPI.createCandidate({
+    mutationFn: (data: CreateCandidateData) =>
+      candidateAPI.createCandidate({
         full_name: data.name,
         email: data.email,
         job_id: data.jobId,
@@ -36,37 +35,29 @@ export const useCreateCandidate = () => {
         github_url: data.github,
         linkedin_url: data.linkedin,
         source: data.source,
-      });
-    },
-    onSuccess: async (_, variables) => {
+      }),
+    onSuccess: (_, variables) => {
       toast.success("Candidate added successfully");
-      // Invalidate and refetch all candidate queries for this job
       const jobIdStr = String(variables.jobId);
       const stageLower = variables.stage ? variables.stage.toLowerCase().trim() : undefined;
       
-      console.log("Invalidating queries for jobId:", jobIdStr, "stage:", stageLower);
-      
-      // Invalidate all queries that start with ["candidates", jobIdStr]
-      // This covers both ["candidates", jobIdStr] and ["candidates", jobIdStr, stage]
-      await queryClient.invalidateQueries({ 
+      queryClient.invalidateQueries({ 
         queryKey: ["candidates", jobIdStr],
         exact: false 
       });
       
-      // Force refetch the specific query
       if (stageLower) {
-        await queryClient.refetchQueries({ 
+        queryClient.refetchQueries({ 
           queryKey: ["candidates", jobIdStr, stageLower] 
         });
       }
       
-      // Also refetch without stage to ensure we get all candidates
-      await queryClient.refetchQueries({ 
+      queryClient.refetchQueries({ 
         queryKey: ["candidates", jobIdStr] 
       });
     },
     onError: (error: any) => {
-      toast.error(error?.message || "Failed to add candidate");
+      toast.error(error?.message || "Failed to add candidate. Please try again.");
     },
   });
 };

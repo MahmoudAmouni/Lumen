@@ -22,37 +22,63 @@ async function apiRequest<T>(
     },
   });
 
-  // Handle empty responses (like 204 No Content)
   const contentType = response.headers.get("content-type");
-  if (!contentType || !contentType.includes("application/json")) {
-    if (response.ok) {
-      return {} as T;
+  const isJson = contentType && contentType.includes("application/json");
+
+  if (!response.ok) {
+    let errorMessage = `API request failed: ${response.statusText}`;
+    
+    if (isJson) {
+      try {
+        const errorData: ApiResponse<any> = await response.json();
+        if (errorData.status === "failure" || errorData.status === "Validation failed") {
+          if (typeof errorData.payload === "string") {
+            errorMessage = errorData.payload;
+          } else if (errorData.payload && typeof errorData.payload === "object" && "message" in errorData.payload) {
+            errorMessage = String(errorData.payload.message);
+          } else {
+            errorMessage = JSON.stringify(errorData.payload);
+          }
+        } else if (errorData.payload) {
+          if (typeof errorData.payload === "string") {
+            errorMessage = errorData.payload;
+          } else if (errorData.payload && typeof errorData.payload === "object" && "message" in errorData.payload) {
+            errorMessage = String(errorData.payload.message);
+          } else {
+            errorMessage = `Server error: ${response.status}`;
+          }
+        }
+      } catch (e) {
+        errorMessage = `Server error (${response.status}): ${response.statusText}`;
+      }
+    } else {
+      errorMessage = `Server error (${response.status}): ${response.statusText}`;
     }
-    throw new Error(`API request failed: ${response.statusText}`);
+    
+    throw new Error(errorMessage);
+  }
+
+  if (!isJson) {
+    return {} as T;
   }
 
   const data: ApiResponse<T> = await response.json();
 
-  // Check response status
   if (data.status === "failure" || data.status === "Validation failed") {
-    const errorMessage = typeof data.payload === "string" 
-      ? data.payload 
-      : JSON.stringify(data.payload);
+    let errorMessage: string;
+    if (typeof data.payload === "string") {
+      errorMessage = data.payload;
+    } else if (data.payload && typeof data.payload === "object" && "message" in data.payload) {
+      errorMessage = String((data.payload as any).message);
+    } else {
+      errorMessage = JSON.stringify(data.payload);
+    }
     throw new Error(errorMessage);
   }
 
-  if (!response.ok) {
-    const errorMessage = typeof data.payload === "string" 
-      ? data.payload 
-      : `API request failed: ${response.statusText}`;
-    throw new Error(errorMessage);
-  }
-
-  // Return the payload from the response
   return data.payload;
 }
 
-// Candidate API
 interface CreateCandidateData {
   full_name: string;
   email: string;
@@ -79,8 +105,6 @@ interface BulkImportData {
 
 export const candidateAPI = {
   async getCandidatesByJob(jobId: string, stage?: string): Promise<any[]> {
-    // Route: GET /v1/candidates/job/{jobId}
-    // Query params: stage_name (optional), per_page (optional), page (optional)
     let endpoint = `/v1/candidates/job/${jobId}`;
     const params = new URLSearchParams();
     if (stage) {
@@ -94,8 +118,6 @@ export const candidateAPI = {
   },
 
   async getCandidateProfile(candidateId: string, jobId?: string): Promise<any> {
-    // Route: GET /v1/candidates/{candidateId}/profile
-    // Query params: job_id (optional)
     let endpoint = `/v1/candidates/${candidateId}/profile`;
     if (jobId) {
       endpoint += `?job_id=${jobId}`;
@@ -104,7 +126,6 @@ export const candidateAPI = {
   },
 
   async createCandidate(data: CreateCandidateData): Promise<any> {
-    // Route: POST /v1/candidates
     return apiRequest<any>("/v1/candidates", {
       method: "POST",
       body: JSON.stringify(data),
@@ -112,7 +133,6 @@ export const candidateAPI = {
   },
 
   async updateCandidateStage(candidateId: string, jobId: string, stage: string): Promise<any> {
-    // Route: POST /v1/candidates/{candidateId}/update-stage
     return apiRequest<any>(`/v1/candidates/${candidateId}/update-stage`, {
       method: "POST",
       body: JSON.stringify({ job_id: jobId, stage }),
@@ -120,7 +140,6 @@ export const candidateAPI = {
   },
 
   async bulkImportCandidates(data: BulkImportData): Promise<any> {
-    // Route: POST /import-excel-n8n (no auth required)
     return apiRequest<any>("/import-excel-n8n", {
       method: "POST",
       body: JSON.stringify(data),
@@ -128,25 +147,75 @@ export const candidateAPI = {
   },
 };
 
-// Job API
 export const jobAPI = {
   async createJob(data: any): Promise<any> {
-    // Route: POST /addJob (no auth required)
-    return apiRequest<any>("/addJob", {
+    const endpoint = "/addJob";
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
       body: JSON.stringify(data),
-    }, false);
+    });
+
+    const contentType = response.headers.get("content-type");
+    const isJson = contentType && contentType.includes("application/json");
+
+    if (isJson) {
+      try {
+        const responseData: any = await response.json();
+        
+        if (responseData.status && responseData.payload) {
+          const payload = responseData.payload;
+          if (payload.id || payload.job || payload.job_id || 
+              (payload.job && (payload.job.id || payload.job.job_id)) ||
+              (typeof payload === "object" && "id" in payload)) {
+            return payload.job || payload;
+          }
+          
+          if (responseData.status === "success" && responseData.payload) {
+            return responseData.payload;
+          }
+        } else {
+          if (responseData.id || responseData.job_id || 
+              (responseData.job && (responseData.job.id || responseData.job.job_id))) {
+            return responseData;
+          }
+        }
+        
+        if (!response.ok) {
+          const errorMessage = typeof responseData.payload === "string" 
+            ? responseData.payload 
+            : (responseData.payload && typeof responseData.payload === "object" && "message" in responseData.payload
+                ? String((responseData.payload as any).message)
+                : (responseData.message || `Server error: ${response.status}`));
+          throw new Error(errorMessage);
+        }
+        
+        return responseData.payload || responseData;
+      } catch (parseError: any) {
+        if (response.ok) {
+          return {} as any;
+        }
+        throw new Error(`Server error (${response.status}): ${response.statusText}`);
+      }
+    }
+
+    if (response.ok) {
+      return {} as any;
+    }
+
+    throw new Error(`Server error (${response.status}): ${response.statusText}`);
   },
 
   async getJobsByCompanyId(companyId: string): Promise<any[]> {
-    // Route: GET /companyJobs/{companyId} (no auth required)
-    // Response: { status: "success", payload: { data: [...], path: "...", per_page: 20, next_cursor: "..." } }
     const response = await apiRequest<{ data: any[] }>(`/companyJobs/${companyId}`, {}, false);
     return response.data || [];
   },
 
   async updateJob(jobId: string, data: any): Promise<any> {
-    // Route: POST /updateJob/{id} (no auth required)
     return apiRequest<any>(`/updateJob/${jobId}`, {
       method: "POST",
       body: JSON.stringify(data),
@@ -154,11 +223,8 @@ export const jobAPI = {
   },
 };
 
-// Auth API
 export const authAPI = {
   async login(email: string, password: string): Promise<{ user: any; token: string }> {
-    // Route: POST /login (no auth required)
-    // Response: { status: "success", payload: { user: {...}, token: "..." } }
     const payload = await apiRequest<{ user: any; token: string }>("/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -168,7 +234,6 @@ export const authAPI = {
       throw new Error("Invalid login response: user data not found");
     }
     
-    // Store token if provided
     if (payload.token) {
       localStorage.setItem("token", payload.token);
     }
@@ -177,22 +242,18 @@ export const authAPI = {
   },
 
   async logout(): Promise<any> {
-    // Route: POST /v1/logout (auth required)
     return apiRequest<any>("/v1/logout", {
       method: "POST",
     });
   },
 };
 
-// User API
 export const userAPI = {
   async getAllUsers(): Promise<any[]> {
-    // Route: GET /v1/users (auth required)
     return apiRequest<any[]>("/v1/users");
   },
 
   async getUsersByCompany(companyId: string): Promise<any[]> {
-    // Route: GET /v1/users/company/{companyId} (auth required)
     return apiRequest<any[]>(`/v1/users/company/${companyId}`);
   },
 
@@ -203,7 +264,6 @@ export const userAPI = {
     company_id: string;
     role: "recruiter" | "interviewer";
   }): Promise<any> {
-    // Route: POST /v1/users (auth required)
     return apiRequest<any>("/v1/users", {
       method: "POST",
       body: JSON.stringify(data),
@@ -211,15 +271,12 @@ export const userAPI = {
   },
 };
 
-// Company API
 export const companyAPI = {
   async getAllCompanies(): Promise<any[]> {
-    // Route: GET /v1/companies (auth required)
     return apiRequest<any[]>("/v1/companies");
   },
 
   async createCompany(name: string): Promise<any> {
-    // Route: POST /v1/companies (auth required)
     return apiRequest<any>("/v1/companies", {
       method: "POST",
       body: JSON.stringify({ name }),
@@ -227,34 +284,42 @@ export const companyAPI = {
   },
 };
 
-// Stage API
 export const stageAPI = {
   async getAllStages(): Promise<any[]> {
-    // Route: GET /v1/stages (auth required)
     return apiRequest<any[]>("/v1/stages");
   },
 };
 
-// Skill API
 export const skillAPI = {
   async getAllSkills(): Promise<any[]> {
-    // Route: GET /v1/skills (auth required)
     return apiRequest<any[]>("/v1/skills");
   },
 };
 
-// Interview API
 export const interviewAPI = {
   async updateInterviewNotes(
     candidateId: string | number,
     jobId: string | number,
     notes: string
   ): Promise<any> {
-    // Route: POST /v1/interviews/update-notes (auth required)
     return apiRequest<any>("/v1/interviews/update-notes", {
       method: "POST",
       body: JSON.stringify({ candidate_id: candidateId, job_id: jobId, notes }),
     });
+  },
+};
+
+export const contactAPI = {
+  async sendContactEmail(data: {
+    name: string;
+    email: string;
+    company?: string;
+    message: string;
+  }): Promise<any> {
+    return apiRequest<any>("/contact", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }, false);
   },
 };
 

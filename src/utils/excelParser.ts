@@ -13,17 +13,11 @@ export const parseExcelFile = (file: File): Promise<ExcelCandidate[]> => {
       try {
         const data = new Uint8Array(e.target?.result as ArrayBuffer);
         const workbook = XLSX.read(data, { type: "array" });
-        
-        // Get the first sheet
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
-        
-        // Convert to JSON
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
         
-        // Map to our candidate format
         const candidates: ExcelCandidate[] = jsonData.map((row: any) => {
-          // Try different possible column names
           const name = row.Name || row.name || row["Full Name"] || row["Full name"] || row["Candidate Name"] || "";
           const email = row.Email || row.email || row["Email Address"] || row["E-mail"] || "";
           

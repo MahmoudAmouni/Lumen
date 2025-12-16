@@ -11,22 +11,91 @@ import InterviewNotes from "../pages/InterviewNotes";
 import AdminDashboard from "../pages/AdminDashboard";
 import JobDetail from "../pages/JobDetail";
 import NotFound from "../pages/NotFound";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export const AppRouter = () => {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/Job" element={<JobList />} />
-        <Route path="/createJob" element={<CreateJob />} />
-        <Route path="/jobs/:jobId" element={<JobDetail />} />
-        <Route path="/candidate" element={<Candidates />} />
-        <Route path="/candidate-detail" element={<CandidateDetail />} />
-        <Route path="/ai-copilot" element={<AICopilot />} />
-        <Route path="/interview-notes" element={<InterviewNotes />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        
+        {/* Protected routes - require authentication */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Job"
+          element={
+            <ProtectedRoute>
+              <JobList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/createJob"
+          element={
+            <ProtectedRoute>
+              <CreateJob />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/jobs/:jobId"
+          element={
+            <ProtectedRoute>
+              <JobDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/candidate"
+          element={
+            <ProtectedRoute>
+              <Candidates />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/candidate-detail"
+          element={
+            <ProtectedRoute>
+              <CandidateDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai-copilot"
+          element={
+            <ProtectedRoute>
+              <AICopilot />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/interview-notes"
+          element={
+            <ProtectedRoute>
+              <InterviewNotes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

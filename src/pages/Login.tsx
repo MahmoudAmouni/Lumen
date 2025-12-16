@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
 import { useLogin } from "../hooks/useLogin";
 import logo from "../assets/lumen-logo.png"
@@ -17,6 +17,7 @@ type LoginFormValues = {
 
 export default function Login({ onSubmit }: LoginPageProps) {
   const [serverError, setServerError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -27,6 +28,13 @@ export default function Login({ onSubmit }: LoginPageProps) {
   });
 
   const loginMutation = useLogin();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
 
   const onSubmitForm = (values: LoginFormValues) => {
     setServerError(null);

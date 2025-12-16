@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { candidateAPI } from "../services/api";
 import styles from "./CandidateSidebar.module.css";
 import logo from "../assets/lumen-logo.png";
-import { FiUser, FiCpu, FiFileText } from "react-icons/fi";
+import { FiUser, FiCpu, FiFileText, FiArrowLeft } from "react-icons/fi";
 
 type NavItem = {
   key: string;
@@ -37,7 +37,6 @@ export default function CandidateSidebar() {
     .trim()
     .toLowerCase();
 
-  // ✅ works for: "Interview", "Technical Interview", "Interview 1", etc.
   const canShowInterviewNotes = stage.includes("interview");
 
   const handleNavigation = (path: string) => {
@@ -103,6 +102,25 @@ export default function CandidateSidebar() {
             );
           })}
       </nav>
+
+      <div className={styles.sidebarFooter}>
+        <button
+          type="button"
+          className={styles.backButton}
+          onClick={() => {
+            if (jobId) {
+              navigate(`/dashboard?jobId=${jobId}`);
+            } else {
+              navigate("/dashboard");
+            }
+          }}
+        >
+          <span className={styles.navIcon} aria-hidden="true">
+            <FiArrowLeft />
+          </span>
+          <span className={styles.navLabel}>Back to Dashboard</span>
+        </button>
+      </div>
     </aside>
   );
 }

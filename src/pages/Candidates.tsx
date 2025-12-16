@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import ClipLoader from "react-spinners/ClipLoader";
 
 import Header from "../components/Header";
 import Sidebar from "../components/SiderBar";
@@ -215,7 +216,12 @@ export default function Candidates() {
           </div>
 
           {isLoading ? (
-            <div className={styles.stateCard}>Loading candidates...</div>
+            <div className={styles.stateCard}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "20px" }}>
+                <ClipLoader size={24} color={"var(--color-btn)"} />
+                <span>Loading candidates...</span>
+              </div>
+            </div>
           ) : filteredCandidates.length === 0 && jobId ? (
             <div className={styles.stateCard}>
               {searchTerm

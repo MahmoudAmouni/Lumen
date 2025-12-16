@@ -7,10 +7,8 @@ export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Job, Error, any>({
-    mutationFn: async (data: any) => {
-      return jobAPI.createJob(data);
-    },
-    onSuccess: (_, variables) => {
+    mutationFn: (data: any) => jobAPI.createJob(data),
+    onSuccess: () => {
       toast.success("Job created successfully");
       const companyId = typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
       if (companyId) {
@@ -18,8 +16,15 @@ export const useCreateJob = () => {
       }
     },
     onError: (error: any) => {
-      const message = error?.message || "Failed to create job";
-      toast.error(message);
+      const message = error?.message || "Failed to create job. Please try again.";
+      if (message.includes("500") || message.includes("Internal Server Error")) {
+        const companyId = typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
+        if (companyId) {
+          queryClient.invalidateQueries({ queryKey: ["jobs", companyId] });
+        }
+      } else {
+        toast.error(message);
+      }
     },
   });
 };

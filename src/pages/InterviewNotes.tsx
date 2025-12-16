@@ -7,6 +7,7 @@ import { useCandidateProfile } from "../hooks/useCandidateProfile";
 import { useUpdateInterviewNotes } from "../hooks/useUpdateInterviewNotes";
 import { useJobsByCompany } from "../hooks/useJobsByCompany";
 import { useData } from "../context/DataContext";
+import ClipLoader from "react-spinners/ClipLoader";
 
 export default function InterviewNotes() {
   const [searchParams] = useSearchParams();
@@ -90,7 +91,10 @@ export default function InterviewNotes() {
             </div>
           ) : isLoading || !candidate ? (
             <div className={styles.stateCard}>
-              <p className={styles.stateText}>Loading candidate…</p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "20px" }}>
+                <ClipLoader size={24} color={"var(--color-btn)"} />
+                <p className={styles.stateText}>Loading candidate…</p>
+              </div>
             </div>
           ) : (
             <div className={styles.grid}>
