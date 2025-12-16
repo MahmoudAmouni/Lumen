@@ -1,27 +1,37 @@
-/* DEFAULT = LIGHT THEME */
+/* DEFAULT = DARK */
 :root {
-    --color-header: #f3f4f6;
-    --header-btn: #4a90e2;
-    --color-btn: #4a90e2;
-    --color-bg: #f9fafb;
-    --color-sidebar: #f3f4f6;
-    --color-prm-txt: #111827;
-    --color-sec-txt: #4b5563;
-    --color-card: #ffffff;
-    --btn-txt: #ffffff;
-}
-
-/* DARK MODE */
-:root[data-theme="dark"] {
     --color-header: #111827;
-    --header-btn: #60a5fa;
+    --header-btn: #334053;
     --color-btn: #60a5fa;
+
     --color-bg: #111827;
     --color-sidebar: #1f2937;
+
     --color-prm-txt: #f9fafb;
     --color-sec-txt: #d1d5db;
+
     --color-card: #1f2937;
     --btn-txt: #ffffff;
+
+    --cta-bg: #070d1b;
+}
+
+/* LIGHT (only when data-theme="light") */
+:root[data-theme="light"] {
+    --color-header: #f3f4f6;
+    --header-btn: #e5ecf6;
+    --color-btn: #4a90e2;
+
+    --color-bg: #f9fafb;
+    --color-sidebar: #f3f4f6;
+
+    --color-prm-txt: #111827;
+    --color-sec-txt: #4b5563;
+
+    --color-card: #ffffff;
+    --btn-txt: #ffffff;
+
+    --cta-bg: #e5ecf6;
 }
 
 html {
