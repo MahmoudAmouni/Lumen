@@ -1,0 +1,184 @@
+.footerWrapper {
+    width: 100%;
+    background-color: #2a2a2a;
+}
+
+.footerContainer {
+    max-width: 1600px;
+    margin: 0 auto;
+    background-color: var(--color-card);
+    padding: 2.25rem 2rem;
+    transition: background-color 0.3s ease;
+}
+
+/* -------- Layout -------- */
+.topRow {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.footerLogoSection {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.footerLogoImg {
+    width: 34px;
+    height: auto;
+    display: block;
+}
+
+.footerLogoText {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-btn);
+    font-family: sans-serif;
+    transition: color 0.3s ease;
+}
+
+.tagline {
+    margin: 0;
+    color: var(--color-sec-txt);
+    font-size: 0.9rem;
+    line-height: 1.35;
+    max-width: 32ch;
+}
+
+/* -------- Link columns -------- */
+.linksGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+    gap: 1.5rem;
+}
+
+.linkCol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.colTitle {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--color-prm-txt);
+    font-family: sans-serif;
+}
+
+.link {
+    color: var(--color-sec-txt);
+    text-decoration: none;
+    font-size: 0.88rem;
+    line-height: 1.25;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.link:hover {
+    opacity: 0.85;
+    transform: translateX(1px);
+}
+
+/* -------- Bottom row -------- */
+.bottomRow {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.footerCopy {
+    margin: 0;
+    color: var(--color-sec-txt);
+    font-size: 0.85rem;
+    font-family: sans-serif;
+}
+
+/* -------- Social (smaller) -------- */
+.social {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.socialLabel {
+    color: var(--color-prm-txt);
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: sans-serif;
+}
+
+.socialIcons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.socialIcon {
+    width: 30px;
+    /* smaller */
+    height: 30px;
+    /* smaller */
+    border-radius: 999px;
+    background-color: var(--color-btn);
+    color: var(--btn-txt);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.socialIcon:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.socialIcon svg {
+    width: 16px;
+    /* smaller */
+    height: 16px;
+    /* smaller */
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 992px) {
+    .topRow {
+        grid-template-columns: 1fr;
+    }
+
+    .linksGrid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+    }
+
+    .tagline {
+        max-width: 60ch;
+    }
+}
+
+@media (max-width: 600px) {
+    .footerContainer {
+        padding: 1.5rem 1rem;
+    }
+
+    .linksGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .bottomRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
