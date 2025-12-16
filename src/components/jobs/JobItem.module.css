@@ -1,0 +1,83 @@
+.jobCard {
+    background-color: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
+    border-radius: 8px;
+    padding: 16px;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.jobCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+    border-color: color-mix(in srgb, var(--color-btn) 35%, transparent);
+}
+
+.jobTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-prm-txt);
+}
+
+.jobType {
+    color: var(--color-sec-txt);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.jobStatus {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* token-based pills */
+.statusOpen {
+    background: color-mix(in srgb, var(--color-btn) 16%, transparent);
+    color: var(--color-btn);
+    border: 1px solid color-mix(in srgb, var(--color-btn) 35%, transparent);
+}
+
+.statusClosed {
+    background: color-mix(in srgb, var(--color-sec-txt) 14%, transparent);
+    color: var(--color-sec-txt);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 28%, transparent);
+}
+
+.statusNeutral {
+    background: color-mix(in srgb, var(--cta-bg) 55%, transparent);
+    color: var(--color-sec-txt);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 22%, transparent);
+}
+
+.actionButtons {
+    margin: 12px 0;
+}
+
+.jobStats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.statValue {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--color-prm-txt);
+}
+
+.statLabel {
+    color: var(--color-sec-txt);
+    font-size: 12px;
+}

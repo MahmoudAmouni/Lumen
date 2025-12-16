@@ -1,11 +1,14 @@
 :root  {
     --color-header: #f3f4f6;
-    --header-btn: #4a90e2;
+    --header-btn: #e5ecf6;
     --color-btn: #4a90e2;
+
     --color-bg: #f9fafb;
     --color-sidebar: #f3f4f6;
+
     --color-prm-txt: #111827;
     --color-sec-txt: #4b5563;
+
     --color-card: #ffffff;
     --btn-txt: #ffffff;
     --cta-bg: #e5ecf6;
