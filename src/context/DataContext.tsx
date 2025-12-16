@@ -120,6 +120,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateCandidateStage = async (candidateId: string, newStage: string, jobId?: string) => {
+    const candidate = candidates.find((c) => c.id === candidateId);
+    const oldStage = candidate?.stage;
+
     try {
       if (jobId) {
         await candidateAPI.updateCandidateStage(candidateId, jobId, newStage);
@@ -130,11 +133,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         )
       );
     } catch (error) {
-      setCandidates((prev) =>
-        prev.map((candidate) =>
-          candidate.id === candidateId ? { ...candidate, stage: newStage } : candidate
-        )
-      );
+      if (oldStage) {
+        setCandidates((prev) =>
+          prev.map((candidate) =>
+            candidate.id === candidateId ? { ...candidate, stage: oldStage } : candidate
+          )
+        );
+      }
       throw error;
     }
   };
@@ -159,7 +164,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       // Try to fetch from API first
-      const apiCandidates = await candidateAPI.getCandidatesByJob(numericJobId, stage);
+      const apiCandidates = await candidateAPI.getCandidatesByJob(String(numericJobId), stage);
       // Transform API response to frontend format
       return apiCandidates.map((c: any) => ({
         id: c.id,
