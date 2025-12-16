@@ -1,0 +1,97 @@
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+
+  background:
+    radial-gradient(
+      900px 320px at 50% 10%,
+      color-mix(in srgb, var(--color-btn) 14%, transparent),
+      transparent 60%
+    ),
+    var(--color-bg);
+
+  color: var(--color-prm-txt);
+}
+
+.card {
+  width: min(980px, 94vw);
+  min-height: 320px;
+
+  background: var(--color-card);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
+  border-radius: 18px;
+
+  padding: 48px 56px;
+  text-align: center;
+
+  /* softer in dark mode (and still fine in light) */
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--color-sec-txt) 10%, transparent);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+
+  color: var(--color-prm-txt);
+  background: color-mix(in srgb, var(--color-btn) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 26%, transparent);
+}
+
+.title {
+  margin: 18px 0 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  color: var(--color-prm-txt);
+}
+
+.subtitle {
+  margin: 0 auto 22px;
+  max-width: 62ch;
+
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.7;
+
+  color: var(--color-sec-txt);
+}
+
+.primaryBtn {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  background: var(--color-btn);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 70%, transparent);
+  color: var(--btn-txt);
+
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-1px);
+  opacity: 0.96;
+  box-shadow: 0 12px 22px color-mix(in srgb, var(--color-sec-txt) 10%, transparent);
+}
