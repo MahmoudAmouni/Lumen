@@ -3,62 +3,63 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
-import { useLogin } from "../hooks/useLogin";
-import logo from "../assets/lumen-logo.png"
-type LoginPageProps = {
-  onSubmit?: (payload: { email: string; password: string }) => void;
-};
+import { useRegister } from "../hooks/useRegister";
+import logo from "../assets/lumen-logo.png";
 
-type LoginFormValues = {
+type RegisterFormValues = {
+  name: string;
   email: string;
   password: string;
-  remember: boolean;
+  confirmPassword: string;
 };
 
-export default function Login({ onSubmit }: LoginPageProps) {
+export default function Register() {
   const [serverError, setServerError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    defaultValues: { email: "", password: "", remember: true },
+  } = useForm<RegisterFormValues>({
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
-  const loginMutation = useLogin();
+  const registerMutation = useRegister();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [navigate]);
+  const password = watch("password");
 
-  const onSubmitForm = (values: LoginFormValues) => {
+  // Allow access to register page even if logged in
+  // User can register a new account or will be redirected after successful registration
+
+  const onSubmitForm = (values: RegisterFormValues) => {
     setServerError(null);
-    onSubmit?.({ email: values.email, password: values.password });
 
-    loginMutation.mutate(
-      { email: values.email, password: values.password },
+    if (values.password !== values.confirmPassword) {
+      setServerError("Passwords do not match");
+      return;
+    }
+
+    registerMutation.mutate(
+      { name: values.name, email: values.email, password: values.password },
       {
         onError: (err: any) => {
           setServerError(
-            err?.message || "Login failed. Please check your credentials."
+            err?.message || "Registration failed. Please try again."
           );
         },
       }
     );
   };
 
-  const isBusy = loginMutation.isPending || isSubmitting;
+  const isBusy = registerMutation.isPending || isSubmitting;
 
   return (
     <div className={styles.page}>
       <div className={styles.bgGlow} aria-hidden="true" />
 
-      <div className={styles.card} role="region" aria-label="Login">
+      <div className={styles.card} role="region" aria-label="Register">
         <div className={styles.topBar}>
           <Link to="/" className={styles.backLink}>
             ← Back to home
@@ -69,12 +70,35 @@ export default function Login({ onSubmit }: LoginPageProps) {
           <img src={logo} alt="Lumen Logo" className={styles.logo} />
         </div>
 
-        <h1 className={styles.title}>Welcome back</h1>
+        <h1 className={styles.title}>Create your account</h1>
         <p className={styles.subtitle}>
-          Sign in to manage roles, candidates, and evidence-based notes.
+          Sign up to start managing roles, candidates, and evidence-based notes.
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit(onSubmitForm)}>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="name">
+              Full Name
+            </label>
+            <input
+              id="name"
+              className={`${styles.input} ${
+                errors.name ? styles.inputError : ""
+              }`}
+              type="text"
+              autoComplete="name"
+              placeholder="John Doe"
+              disabled={isBusy}
+              {...register("name", {
+                required: "Name is required",
+                minLength: { value: 2, message: "Minimum 2 characters" },
+              })}
+            />
+            {errors.name && (
+              <span className={styles.fieldError}>{errors.name.message}</span>
+            )}
+          </div>
+
           <div className={styles.field}>
             <label className={styles.label} htmlFor="email">
               Email
@@ -102,22 +126,16 @@ export default function Login({ onSubmit }: LoginPageProps) {
           </div>
 
           <div className={styles.field}>
-            <div className={styles.labelRow}>
-              <label className={styles.label} htmlFor="password">
-                Password
-              </label>
-              <a className={styles.forgotLink} href="#">
-                Forgot?
-              </a>
-            </div>
-
+            <label className={styles.label} htmlFor="password">
+              Password
+            </label>
             <input
               id="password"
               className={`${styles.input} ${
                 errors.password ? styles.inputError : ""
               }`}
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               placeholder="••••••••"
               disabled={isBusy}
               {...register("password", {
@@ -132,17 +150,30 @@ export default function Login({ onSubmit }: LoginPageProps) {
             )}
           </div>
 
-          <div className={styles.row}>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                disabled={isBusy}
-                {...register("remember")}
-              />
-              <span>Remember me</span>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="confirmPassword">
+              Confirm Password
             </label>
-
-            <span className={styles.securityHint}>🔒 Encrypted session</span>
+            <input
+              id="confirmPassword"
+              className={`${styles.input} ${
+                errors.confirmPassword ? styles.inputError : ""
+              }`}
+              type="password"
+              autoComplete="new-password"
+              placeholder="••••••••"
+              disabled={isBusy}
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+            />
+            {errors.confirmPassword && (
+              <span className={styles.fieldError}>
+                {errors.confirmPassword.message}
+              </span>
+            )}
           </div>
 
           {serverError && (
@@ -155,21 +186,22 @@ export default function Login({ onSubmit }: LoginPageProps) {
             {isBusy ? (
               <span className={styles.btnInner}>
                 <span className={styles.spinner} aria-hidden="true" />
-                Logging in…
+                Creating account…
               </span>
             ) : (
-              "Login"
+              "Create account"
             )}
           </button>
 
           <p className={styles.bottomText}>
-            New to Lumen?{" "}
-            <a className={styles.inlineLink} href="#">
-              Request access
-            </a>
+            Already have an account?{" "}
+            <Link to="/login" className={styles.inlineLink}>
+              Sign in
+            </Link>
           </p>
         </form>
       </div>
     </div>
   );
 }
+

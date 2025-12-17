@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import styles from "./CandidateQuickView.module.css";
 import { useData } from "../context/DataContext";
 import type { Candidate, Job } from "../context/DataContext";
 import { FiX } from "react-icons/fi";
+import ConfirmModal from "./ConfirmModal";
+import { useConfirm } from "../hooks/useConfirm";
 
 interface CandidateQuickViewProps {
   candidate: Candidate;
@@ -18,6 +21,7 @@ export default function CandidateQuickView({
 }: CandidateQuickViewProps) {
   const navigate = useNavigate();
   const { updateCandidateStage, getPipelineStages } = useData();
+  const { confirm, confirmState } = useConfirm();
 
   const pipelineStages = getPipelineStages(job.id);
   const currentStageIndex = pipelineStages.findIndex(
@@ -37,20 +41,29 @@ export default function CandidateQuickView({
   const isRejected = candidate.stage.toLowerCase() === "rejected";
 
   const handleTerminate = async () => {
-    if (window.confirm(`Are you sure you want to reject ${candidate.name}?`)) {
-      const rejectedStage = pipelineStages.find(
-        (stage) => stage.name.toLowerCase() === "rejected"
+    const confirmed = await confirm({
+      title: "Reject Candidate",
+      message: `Are you sure you want to reject ${candidate.name}?`,
+      confirmText: "Reject",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+
+    if (!confirmed) return;
+
+    const rejectedStage = pipelineStages.find(
+      (stage) => stage.name.toLowerCase() === "rejected"
+    );
+    try {
+      await updateCandidateStage(
+        candidate.id,
+        rejectedStage?.name ?? "Rejected",
+        candidate.jobId
       );
-      try {
-        await updateCandidateStage(
-          candidate.id,
-          rejectedStage?.name ?? "Rejected",
-          candidate.jobId
-        );
-        onClose();
-      } catch {
-        toast.error("Failed to update candidate stage. Please try again.");
-      }
+      toast.success(`${candidate.name} has been rejected`);
+      onClose();
+    } catch {
+      toast.error("Failed to update candidate stage. Please try again.");
     }
   };
 
@@ -150,6 +163,19 @@ export default function CandidateQuickView({
           </button>
         </div>
       </div>
+
+      {confirmState && (
+        <ConfirmModal
+          isOpen={confirmState.isOpen}
+          title={confirmState.title}
+          message={confirmState.message}
+          confirmText={confirmState.confirmText}
+          cancelText={confirmState.cancelText}
+          variant={confirmState.variant}
+          onConfirm={confirmState.onConfirm}
+          onCancel={confirmState.onCancel}
+        />
+      )}
     </div>
   );
 }
