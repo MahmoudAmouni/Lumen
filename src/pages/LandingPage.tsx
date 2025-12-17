@@ -96,7 +96,7 @@ export const LandingPage = () => {
 
         <div className={styles.heroButtons}>
           <button className={styles.primaryBtn} onClick={handleLoginClick}>
-            Start free trial
+            Start free demo
           </button>
           <button className={styles.secondaryBtn} onClick={handleBookDemoClick}>
             Book a demo
