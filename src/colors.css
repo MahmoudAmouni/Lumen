@@ -1,31 +1,52 @@
 :root  {
-    --color-header: #f3f4f6;
-    --header-btn: #e5ecf6;
-    --color-btn: #4a90e2;
+    /* Light theme colors */
+    --color-header: #ffffff;
+    --header-btn: #e5e7eb;
+    --color-btn: #3b82f6;
+    --color-btn-hover: #2563eb;
 
-    --color-bg: #f9fafb;
-    --color-sidebar: #f3f4f6;
+    --color-bg: #f8fafc;
+    --color-sidebar: #ffffff;
+    --sidebar-border: #e5e7eb;
 
-    --color-prm-txt: #111827;
-    --color-sec-txt: #4b5563;
+    --color-prm-txt: #1e293b;
+    --color-sec-txt: #64748b;
+    --color-border: #e2e8f0;
 
     --color-card: #ffffff;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    
     --btn-txt: #ffffff;
-    --cta-bg: #e5ecf6;
+    --cta-bg: #f1f5f9;
+    --input-border: #cbd5e1;
+    
+    /* Spacing and sizing */
+    --border-radius: 0.5rem;
+    --border-radius-sm: 0.25rem;
+    --border-radius-lg: 0.75rem;
 }
 
-:root[data-theme="light"] {
-    --color-header: #111827;
-    --header-btn: #60a5fa;
+:root[data-theme="dark"] {
+    /* Dark theme colors */
+    --color-header: #1f2937;
+    --header-btn: #4b5563;
     --color-btn: #60a5fa;
-    --color-bg: #111827;
-    --color-sidebar: #1f2937;
-    --color-prm-txt: #f9fafb;
-    --color-sec-txt: #d1d5db;
-    --color-card: #1f2937;
-    --btn-txt: #ffffff;
-    --cta-bg: #070d1b;
+    --color-btn-hover: #3b82f6;
+
+    --color-bg: #0f172a;
+    --color-sidebar: #1e293b;
+    --sidebar-border: #334155;
+
+    --color-prm-txt: #f1f5f9;
+    --color-sec-txt: #94a3b8;
+    --color-border: #475569;
+
+    --color-card: #1e293b;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     
+    --btn-txt: #ffffff;
+    --cta-bg: #334155;
+    --input-border: #475569;
 }
 
 html {

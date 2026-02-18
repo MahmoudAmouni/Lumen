@@ -3,12 +3,12 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    margin-left: 245px;
+    margin-left: 16rem;
     background-color: var(--color-bg);
 }
 
 .pageContent {
-    padding: 74px 40px 40px;
+    padding: 4.625rem 2.5rem 2.5rem;
     flex-grow: 1;
     overflow-y: auto;
     background-color: var(--color-bg);
@@ -23,10 +23,10 @@
 
 .pageTitle {
     font-family: 'Inter', sans-serif;
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 39px;
-    color: #FFFFFF;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-prm-txt);
     margin: 0;
 }
 
@@ -38,10 +38,10 @@
 
 .filterLabel {
     font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 19px;
-    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-sec-txt);
 }
 
 .selectWrapper {
@@ -51,60 +51,69 @@
 
 .jobSelect {
     box-sizing: border-box;
-    background-color: #1F2937;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: #F9FAFB;
+    background-color: var(--color-card);
+    border: 1px solid var(--input-border);
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1rem;
+    color: var(--color-prm-txt);
     font-family: 'Inter', sans-serif;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
     line-height: 100%;
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    width: 176px;
-    height: 40px;
-    padding-right: 40px;
+    width: 11rem;
+    height: 2.5rem;
+    padding-right: 2.5rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.jobSelect:focus {
+    outline: none;
+    border-color: var(--color-btn);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .dropdownIcon {
     position: absolute;
-    right: 12px;
+    right: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #F9FAFB;
+    color: var(--color-sec-txt);
     pointer-events: none;
-    width: 10px;
-    height: 5px;
+    width: 0.625rem;
+    height: 0.3125rem;
+    transition: color 0.2s ease;
 }
 
 .pipelineGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.5rem;
     width: 100%;
 }
 
 .stageCard {
     box-sizing: border-box;
-    background-color: #1F2937;
-    border: 1px solid rgba(188, 188, 188, 0.99);
-    border-radius: 8px;
-    padding: 32px 24px;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 160px;
+    min-height: 10rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     width: 100%;
+    box-shadow: var(--card-shadow);
 }
 
 .stageCard:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .stageContent {
@@ -117,43 +126,45 @@
 
 .stageLabel {
     font-family: 'Inter', sans-serif;
-    font-size: 24px;
-    font-weight: 400;
-    line-height: 28px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-sec-txt);
     margin: 0;
 }
 
 .stageCount {
     font-family: 'Inter', sans-serif;
-    font-size: 32px;
-    font-weight: 400;
-    line-height: 38px;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
     text-align: center;
-    color: #F9FAFB;
-    margin: 0;
+    color: var(--color-prm-txt);
+    margin: 0.5rem 0 0;
 }
 
 .noJobSelected,
 .noStages {
-    padding: 40px;
+    padding: 2.5rem;
     text-align: center;
-    color: #A6AAAF;
+    color: var(--color-sec-txt);
     font-family: 'Inter', sans-serif;
-    font-size: 18px;
-    background-color: #1F2937;
-    border-radius: 8px;
-    margin-top: 20px;
+    font-size: 1.125rem;
+    background-color: var(--color-card);
+    border-radius: var(--border-radius);
+    margin-top: 1.25rem;
+    box-shadow: var(--card-shadow);
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1200px) {
     .pipelineGrid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 768px) {
     .pipelineGrid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
     }
 }
 
@@ -163,14 +174,14 @@
     }
 
     .pageContent {
-        padding: 20px 16px;
+        padding: 1.25rem 1rem;
     }
 
     .headerRow {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
-        margin-bottom: 32px;
+        gap: 1rem;
+        margin-bottom: 2rem;
     }
 
     .filterContainer {
@@ -188,20 +199,19 @@
     }
 
     .pipelineGrid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        gap: 1rem;
     }
 
     .stageCard {
-        min-height: 140px;
-        padding: 24px 20px;
+        min-height: 9rem;
+        padding: 1.5rem 1.25rem;
     }
 
     .stageLabel {
-        font-size: 20px;
+        font-size: 1.125rem;
     }
 
     .stageCount {
-        font-size: 28px;
+        font-size: 1.75rem;
     }
 }
