@@ -17,9 +17,10 @@ interface DropdownProps {
   onChange: (value: string) => void;
   className?: string;
   disabled?: boolean;
+  loading?: boolean;
 }
 
-function Dropdown({ options, value, onChange, className, disabled }: DropdownProps) {
+function Dropdown({ options, value, onChange, className, disabled, loading }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,18 +37,22 @@ function Dropdown({ options, value, onChange, className, disabled }: DropdownPro
   const selectedOption = options.find((opt) => opt.value === value);
 
   return (
-    <div ref={dropdownRef} className={`${styles.dropdownRoot} ${className || ""} ${isOpen ? styles.dropdownOpen : ""} ${disabled ? styles.dropdownDisabled : ""}`}>
+    <div ref={dropdownRef} className={`${styles.dropdownRoot} ${className || ""} ${isOpen ? styles.dropdownOpen : ""} ${disabled || loading ? styles.dropdownDisabled : ""}`}>
       <button
         type="button"
         className={styles.dropdownToggle}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        disabled={disabled}
+        onClick={() => !(disabled || loading) && setIsOpen(!isOpen)}
+        disabled={disabled || loading}
       >
         <span className={styles.dropdownValue}>{selectedOption?.label || "Select..."}</span>
-        <FiChevronDown className={styles.dropdownArrow} />
+        {loading ? (
+          <span className={styles.dropdownLoader} />
+        ) : (
+          <FiChevronDown className={styles.dropdownArrow} />
+        )}
       </button>
 
-      {isOpen && (
+      {isOpen && !loading && (
         <div className={styles.dropdownMenu}>
           {options.map((option) => (
             <button
@@ -67,6 +72,7 @@ function Dropdown({ options, value, onChange, className, disabled }: DropdownPro
     </div>
   );
 }
+
 
 
 export default function Dashboard() {
@@ -215,10 +221,11 @@ export default function Dashboard() {
                           updateJobStatusMutation.mutate({ jobId: selectedJobId, status: val as Job["status"] })
                         }
                         className={styles.statusPickerDropdown}
-                        disabled={updateJobStatusMutation.isPending}
+                        loading={updateJobStatusMutation.isPending}
                       />
                     </span>
                   )}
+
                 </div>
 
               </div>
