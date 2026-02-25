@@ -1,13 +1,73 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/SiderBar";
+import { IoMdAnalytics } from "react-icons/io";
+import { FiChevronDown } from "react-icons/fi";
 import styles from "../styles/DashboardPage.module.css";
 import { useData } from "../context/DataContext";
 import type { Job } from "../context/DataContext";
 import { useJobsByCompany } from "../hooks/useJobsByCompany";
 import { useUpdateJobStatus } from "../hooks/useUpdateJobStatus";
 import { useCandidatesByJob } from "../hooks/useCandidatesByJob";
+
+interface DropdownProps {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+  disabled?: boolean;
+}
+
+function Dropdown({ options, value, onChange, className, disabled }: DropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((opt) => opt.value === value);
+
+  return (
+    <div ref={dropdownRef} className={`${styles.dropdownRoot} ${className || ""} ${isOpen ? styles.dropdownOpen : ""} ${disabled ? styles.dropdownDisabled : ""}`}>
+      <button
+        type="button"
+        className={styles.dropdownToggle}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
+      >
+        <span className={styles.dropdownValue}>{selectedOption?.label || "Select..."}</span>
+        <FiChevronDown className={styles.dropdownArrow} />
+      </button>
+
+      {isOpen && (
+        <div className={styles.dropdownMenu}>
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`${styles.dropdownOption} ${option.value === value ? styles.dropdownOptionActive : ""}`}
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -131,37 +191,36 @@ export default function Dashboard() {
                   {/* Job selector */}
                   <div className={styles.jobPickerWrapper}>
                     <span className={styles.jobPickerLabel}>Role</span>
-                    <select
-                      className={styles.jobPickerSelect}
+                    <Dropdown
+                      options={jobs.map(j => ({ value: j.id, label: j.title }))}
                       value={selectedJobId}
-                      onChange={handleJobChange}
-                    >
-                      {jobs.map((job) => (
-                        <option key={job.id} value={job.id}>
-                          {job.title}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setSelectedJobId}
+                      className={styles.jobPickerDropdown}
+                    />
                   </div>
 
                   {/* Status badge */}
                   {selectedJob && (
                     <span className={`${styles.statusBadge} ${statusClass}`}>
                       <span className={styles.statusDot} />
-                      <select
-                        className={styles.statusPickerSelect}
+                      <Dropdown
+                        options={[
+                          { value: "open", label: "Open" },
+                          { value: "closed", label: "Closed" },
+                          { value: "draft", label: "Draft" },
+                          { value: "paused", label: "Paused" },
+                        ]}
                         value={currentStatus}
-                        onChange={handleStatusChange}
+                        onChange={(val) => 
+                          updateJobStatusMutation.mutate({ jobId: selectedJobId, status: val as Job["status"] })
+                        }
+                        className={styles.statusPickerDropdown}
                         disabled={updateJobStatusMutation.isPending}
-                      >
-                        <option value="open">Open</option>
-                        <option value="closed">Closed</option>
-                        <option value="draft">Draft</option>
-                        <option value="paused">Paused</option>
-                      </select>
+                      />
                     </span>
                   )}
                 </div>
+
               </div>
 
               {/* ── Summary tiles ── */}
