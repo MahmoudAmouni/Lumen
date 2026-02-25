@@ -222,13 +222,12 @@ export default function CreateJob() {
         <Header title="SE Factory" />
 
         <div className={styles.pageContent}>
-          <h1 className={styles.pageTitle}>Create New Job</h1>
-
-          {(isLoadingSkills || isLoadingStages) && (
-            <div className={styles.loadingBox}>
-              <ClipLoader size={32} color={"var(--color-btn)"} />
-            </div>
-          )}
+          <header className={styles.pageHeader}>
+            <h1 className={styles.pageTitle}>Define New Opportunity</h1>
+            <p className={styles.pageSubtitle}>
+              Craft a compelling job posting to attract the world's top talent.
+            </p>
+          </header>
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
             <section className={styles.section}>

@@ -134,14 +134,34 @@ export default function JobList() {
           </div>
 
           {isLoading ? (
-            <div className={styles.noJobs}>
-              <ClipLoader size={40} color={"var(--color-btn)"} />
+            <div className={styles.skeletonGrid}>
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className={styles.skeletonCard} />
+              ))}
             </div>
           ) : jobsWithStats.length === 0 ? (
-            <div className={styles.noJobs}>
-              {searchTerm || statusFilter !== "all"
-                ? "No jobs found matching your filters."
-                : "No jobs created yet. Click 'Add Role' to create your first job posting."}
+            <div className={styles.emptyContainer}>
+              {searchTerm || statusFilter !== "all" ? (
+                <div className={styles.noJobs}>
+                   No jobs found matching your filters. Try adjusting your search or filter criteria.
+                </div>
+              ) : (
+                <div className={styles.premiumEmptyCard}>
+                  <div className={styles.iconCircle}>
+                    <FiPlus size={32} />
+                  </div>
+                  <h3 className={styles.emptyTitle}>Ready to hire?</h3>
+                  <p className={styles.emptySubtext}>
+                    You haven't created any job roles yet. Start building your team by posting your first opportunity.
+                  </p>
+                  <button 
+                    className={styles.createFirstBtn}
+                    onClick={handleAddRole}
+                  >
+                    Create Your First Job
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className={styles.jobCardsGrid}>

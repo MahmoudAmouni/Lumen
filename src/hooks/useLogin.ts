@@ -39,7 +39,7 @@ export const useLogin = () => {
       if (isAdmin) {
         navigate("/admin");
       } else {
-        navigate("/Job");
+        navigate("/dashboard");
       }
     },
     onError: (error: any) => {

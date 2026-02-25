@@ -9,8 +9,13 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isActive = (path: string) =>
-    location.pathname === path || location.pathname.startsWith(path + "/");
+  const isActive = (path: string) => {
+    const current = location.pathname.toLowerCase();
+    const target = path.toLowerCase();
+    return current === target || current.startsWith(target + "/");
+  };
+
+  const isJobActive = isActive("/job") || isActive("/createJob") || isActive("/jobs");
 
   return (
     <aside className={styles.sidebar} aria-label="Sidebar">
@@ -44,7 +49,7 @@ export default function Sidebar() {
         <button
           type="button"
           className={`${styles.navItem} ${
-            isActive("/job") ? styles.active : ""
+            isJobActive ? styles.active : ""
           }`}
           onClick={() => navigate("/job")}
         >
