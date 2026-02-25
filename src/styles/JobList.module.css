@@ -2,21 +2,16 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
     min-height: 100vh;
-
-    /* keep your layout; just make it consistent with sidebar width */
     margin-left: 260px;
 }
 
 .pageContent {
     padding: 20px;
     flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
     background-color: var(--color-bg);
-    height: 100%;
 }
+
 
 .pageHeader {
     display: flex;
@@ -60,29 +55,127 @@
     margin-bottom: 20px;
 }
 
+/* grid layout */
 .jobCardsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
 
-/* wrapper button for card (replaces inline cursor style) */
-.jobCardLink {
-    padding: 0;
-    border: none;
-    background: transparent;
-    text-align: left;
-    cursor: pointer;
+/* skeleton loading */
+.skeletonGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.skeletonCard {
+    height: 180px;
+    background: linear-gradient(90deg,
+            var(--color-card) 25%,
+            color-mix(in srgb, var(--color-card) 90%, white) 50%,
+            var(--color-card) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 10%, transparent);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* premium empty state */
+.emptyContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
     width: 100%;
 }
 
-.jobCardLink:focus-visible {
-    outline: none;
-    border-radius: 8px;
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
+.premiumEmptyCard {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-card) 95%, white) 0%, var(--color-card) 100%);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 15%, transparent);
+    border-radius: 20px;
+    padding: 60px 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px color-mix(in srgb, black 20%, transparent);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    animation: fadeIn 0.5s ease-out;
 }
 
-/* empty/loading */
+.iconCircle {
+    width: 70px;
+    height: 70px;
+    background-color: color-mix(in srgb, var(--color-btn) 10%, transparent);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-btn);
+    margin-bottom: 8px;
+}
+
+.emptyTitle {
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-prm-txt);
+    margin: 0;
+}
+
+.emptySubtext {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-sec-txt);
+    margin: 0;
+    max-width: 320px;
+}
+
+.createFirstBtn {
+    background-color: var(--color-btn);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-btn) 30%, transparent);
+}
+
+.createFirstBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--color-btn) 40%, transparent);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* fallback for simple empty state (filtered results) */
 .noJobs {
     padding: 40px;
     text-align: center;

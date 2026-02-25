@@ -31,7 +31,7 @@ export const AppRouter = () => {
           }
         />
         <Route
-          path="/Job"
+          path="/job"
           element={
             <ProtectedRoute>
               <JobList />

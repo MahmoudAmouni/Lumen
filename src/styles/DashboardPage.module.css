@@ -1,147 +1,520 @@
+/* ============================================================
+   Dashboard — Premium Redesign
+   ============================================================ */
+
 .main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
     min-height: 100vh;
-    margin-left: 245px;
+    margin-left: 260px;
     background-color: var(--color-bg);
 }
 
 .pageContent {
-    padding: 74px 40px 40px;
+    padding: 32px 40px 48px;
     flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background-color: var(--color-bg);
-    height: 100%;
 }
 
-.headerRow {
+
+/* ── Top section ─────────────────────────────────────────── */
+.topSection {
     display: flex;
+    align-items: flex-end;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
+    gap: 24px;
+    flex-wrap: wrap;
 }
 
-.headerRowCompact {
-    margin-top: 16px;
-    margin-bottom: 28px;
+.titleBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .pageTitle {
-    font-family: "Inter", sans-serif;
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 39px;
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 30px;
+    font-weight: 700;
     color: var(--color-prm-txt);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
-/* cards grid */
-.pipelineGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    width: 100%;
-}
-
-/* stage card (same sizing, just token colors) */
-.stageCard {
-    box-sizing: border-box;
-
-    background-color: var(--color-card);
-    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 35%, transparent);
-    border-radius: 8px;
-
-    padding: 32px 24px;
-    min-height: 160px;
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    cursor: pointer;
-
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.stageCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
-    border-color: color-mix(in srgb, var(--color-btn) 35%, transparent);
-}
-
-.stageCard:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 18%, transparent);
-    border-color: color-mix(in srgb, var(--color-btn) 55%, transparent);
-}
-
-.stageContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 32px;
-    width: 100%;
-}
-
-.stageLabel {
+.pageSubtitle {
     font-family: "Inter", sans-serif;
-    font-size: 24px;
-    font-weight: 400;
-    line-height: 28px;
-    margin: 0;
-}
-
-/* tone colors (no hard-coded hex) */
-.tone_primary {
-    color: var(--color-btn);
-}
-
-.tone_success {
-    color: color-mix(in srgb, var(--color-btn) 60%, var(--cta-bg));
-}
-
-.tone_danger {
-    color: color-mix(in srgb, var(--color-sec-txt) 60%, var(--color-prm-txt));
-}
-
-.stageCount {
-    font-family: "Inter", sans-serif;
-    font-size: 32px;
-    font-weight: 400;
-    line-height: 38px;
-    text-align: center;
-    color: var(--color-prm-txt);
-    margin: 0;
-}
-
-/* empty states */
-.emptyState {
-    padding: 40px;
-    text-align: center;
+    font-size: 14px;
     color: var(--color-sec-txt);
-    font-family: "Inter", sans-serif;
-    font-size: 18px;
-
-    background-color: var(--color-card);
-    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 25%, transparent);
-    border-radius: 8px;
-    margin-top: 20px;
+    margin: 0;
 }
 
-@media (max-width: 1400px) {
-    .pipelineGrid {
-        grid-template-columns: repeat(3, 1fr);
+/* ── Job selector pill ───────────────────────────────────── */
+.controlsRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.jobPickerWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 20%, transparent);
+    border-radius: 12px;
+    padding: 8px 16px;
+    min-width: 240px;
+    transition: border-color 0.2s ease;
+}
+
+.jobPickerWrapper:focus-within {
+    border-color: color-mix(in srgb, var(--color-btn) 50%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-btn) 12%, transparent);
+}
+
+.jobPickerLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-sec-txt);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.jobPickerSelect {
+    border: none;
+    background: transparent;
+    color: var(--color-prm-txt);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    outline: none;
+    flex: 1;
+    width: 100%;
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Inter", sans-serif;
+    white-space: nowrap;
+}
+
+.statusBadge.status_open {
+    background: color-mix(in srgb, #22c55e 12%, transparent);
+    color: #22c55e;
+    border-color: color-mix(in srgb, #22c55e 30%, transparent);
+}
+
+.statusBadge.status_closed {
+    background: color-mix(in srgb, #ef4444 12%, transparent);
+    color: #ef4444;
+    border-color: color-mix(in srgb, #ef4444 30%, transparent);
+}
+
+.statusBadge.status_draft {
+    background: color-mix(in srgb, var(--color-sec-txt) 12%, transparent);
+    color: var(--color-sec-txt);
+    border-color: color-mix(in srgb, var(--color-sec-txt) 30%, transparent);
+}
+
+.statusBadge.status_paused {
+    background: color-mix(in srgb, #f59e0b 12%, transparent);
+    color: #f59e0b;
+    border-color: color-mix(in srgb, #f59e0b 30%, transparent);
+}
+
+.statusDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
     }
 }
 
+.statusPickerSelect {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    outline: none;
+}
+
+/* ── Summary bar ─────────────────────────────────────────── */
+.summaryBar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+}
+
+.summaryTile {
+    flex: 1;
+    min-width: 140px;
+    background: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 15%, transparent);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summaryTile::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--tile-accent, var(--color-btn));
+    border-radius: 14px 14px 0 0;
+}
+
+.summaryTile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px color-mix(in srgb, black 15%, transparent);
+}
+
+.tileValue {
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--color-prm-txt);
+    line-height: 1;
+}
+
+.tileLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-sec-txt);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+/* ── Section header ──────────────────────────────────────── */
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-prm-txt);
+    margin: 0;
+}
+
+.sectionCount {
+    font-size: 13px;
+    color: var(--color-sec-txt);
+    background: color-mix(in srgb, var(--color-sec-txt) 10%, transparent);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+/* ── Pipeline Table ──────────────────────────────────────── */
+.pipelineTable {
+    width: 100%;
+    background: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 12%, transparent);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px color-mix(in srgb, black 10%, transparent);
+}
+
+.tableHead {
+    display: grid;
+    grid-template-columns: 2fr 100px 80px 1fr 44px;
+    gap: 0;
+    padding: 12px 24px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-sec-txt) 12%, transparent);
+    background: color-mix(in srgb, var(--color-sec-txt) 4%, transparent);
+}
+
+.thCell {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--color-sec-txt);
+    font-family: "Inter", sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.tableBody {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Each row is a button for full a11y */
+.tableRow {
+    all: unset;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 2fr 100px 80px 1fr 44px;
+    gap: 0;
+    padding: 16px 24px;
+    cursor: pointer;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-sec-txt) 8%, transparent);
+    position: relative;
+    transition: background 0.18s ease;
+    width: 100%;
+    align-items: center;
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+/* Left accent bar that appears on hover */
+.tableRow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--row-accent, var(--color-btn));
+    opacity: 0;
+    transition: opacity 0.18s ease;
+    border-radius: 0 2px 2px 0;
+}
+
+.tableRow:hover {
+    background: color-mix(in srgb, var(--color-sec-txt) 4%, transparent);
+}
+
+.tableRow:hover::before {
+    opacity: 1;
+}
+
+.tableRow:focus-visible {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--color-btn) 40%, transparent);
+}
+
+/* Cells */
+.tdName {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "Inter", sans-serif;
+}
+
+.stageColorDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--row-accent, var(--color-btn));
+}
+
+.stageName {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-prm-txt);
+    font-family: "Inter", sans-serif;
+}
+
+.tdCount {
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-prm-txt);
+    letter-spacing: -0.5px;
+}
+
+.tdPct {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-sec-txt);
+    font-family: "Inter", sans-serif;
+}
+
+.tdBar {
+    padding-right: 20px;
+}
+
+.barTrack {
+    height: 5px;
+    background: color-mix(in srgb, var(--color-sec-txt) 12%, transparent);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.barFill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.7s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.tdAction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rowArrow {
+    font-size: 14px;
+    color: var(--color-sec-txt);
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    line-height: 1;
+}
+
+.tableRow:hover .rowArrow {
+    opacity: 1;
+    transform: translateX(3px);
+}
+
+/* ── Empty states ────────────────────────────────────────── */
+.emptyContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    width: 100%;
+}
+
+.premiumEmptyCard {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-card) 95%, white) 0%, var(--color-card) 100%);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 20%, transparent);
+    border-radius: 24px;
+    padding: 60px 48px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 48px color-mix(in srgb, black 20%, transparent);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.iconCircle {
+    width: 84px;
+    height: 84px;
+    background-color: color-mix(in srgb, var(--color-btn) 12%, transparent);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-btn);
+}
+
+.emptyTitle {
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-prm-txt);
+    margin: 0;
+}
+
+.emptySubtext {
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-sec-txt);
+    margin: 0;
+    max-width: 400px;
+}
+
+.createFirstJobBtn {
+    background-color: var(--color-btn);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    margin-top: 8px;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-btn) 35%, transparent);
+    font-family: "Inter", sans-serif;
+}
+
+.createFirstJobBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-btn) 45%, transparent);
+}
+
+.regularEmptyCard {
+    background-color: var(--color-card);
+    border: 1px solid color-mix(in srgb, var(--color-sec-txt) 20%, transparent);
+    border-radius: 16px;
+    padding: 40px 32px;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.stateText {
+    color: var(--color-sec-txt);
+    font-size: 16px;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+}
+
+.inlineActionBtn {
+    background: transparent;
+    border: 1px solid var(--color-btn);
+    color: var(--color-btn);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Inter", sans-serif;
+}
+
+.inlineActionBtn:hover {
+    background-color: color-mix(in srgb, var(--color-btn) 10%, transparent);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1100px) {
     .pipelineGrid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 }
 
@@ -154,28 +527,29 @@
         padding: 20px 16px;
     }
 
-    .headerRow {
+    .topSection {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
-        margin-bottom: 32px;
+        margin-bottom: 24px;
+    }
+
+    .summaryBar {
+        gap: 12px;
+    }
+
+    .summaryTile {
+        min-width: 120px;
+        padding: 16px;
     }
 
     .pipelineGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pipelineGrid {
         grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .stageCard {
-        min-height: 140px;
-        padding: 24px 20px;
-    }
-
-    .stageLabel {
-        font-size: 20px;
-    }
-
-    .stageCount {
-        font-size: 28px;
     }
 }

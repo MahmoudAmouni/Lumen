@@ -343,8 +343,8 @@ export const jobAPI = {
     throw new Error(`Server error (${response.status}): ${response.statusText}`);
   },
 
-  async getJobsByCompanyId(companyId: string): Promise<any[]> {
-    return apiRequest<any[]>(`/v1/jobs/company/${companyId}`, {
+  async getJobsByCompanyId(companyId: string): Promise<any> {
+    return apiRequest<any>(`/jobs/company/${companyId}`, {
       method: "GET",
     });
   },

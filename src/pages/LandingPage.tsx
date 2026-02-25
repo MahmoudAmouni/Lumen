@@ -19,22 +19,22 @@ const FEATURES = [
   {
     icon: <FiFileText />,
     title: "Document-grounded answers",
-    desc: "Ask anything about a candidate and get answers backed by CVs, notes, and portfolios—with citations.",
+    desc: "Ask anything about a candidate and get answers backed by CVs, notes, and portfolios with citations.",
   },
   {
     icon: <FiColumns />,
     title: "Hiring pipeline that stays clean",
-    desc: "Roles, stages, interviews, scorecards and offers—organized in one place with a fast kanban flow.",
+    desc: "Roles, stages, interviews, scorecards and offers organized in one place with a fast kanban flow.",
   },
   {
     icon: <FiMic />,
     title: "Interview copilot",
-    desc: "Capture notes, summarize interviews, and draft scorecards automatically—without losing evidence.",
+    desc: "Capture notes, summarize interviews, and draft scorecards automatically without losing evidence.",
   },
   {
     icon: <FiZap />,
     title: "Automation via n8n",
-    desc: "Trigger workflows for scheduling, follow-ups, offer packets, and reminders—customizable to your team.",
+    desc: "Trigger workflows for scheduling, follow-ups, offer packets, and reminders customizable to your team.",
   },
   {
     icon: <FiCheckCircle />,
@@ -90,7 +90,7 @@ export const LandingPage = () => {
 
         <p className={styles.heroSubtext}>
           Lumen answers questions about candidates using only their real
-          documents (CVs, portfolios, interview notes) with citations—no
+          documents (CVs, portfolios, interview notes) with citations no
           hallucinations.
         </p>
 
