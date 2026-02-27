@@ -2,58 +2,63 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px;
+    width: 16rem;
     height: 100vh;
     background-color: var(--color-sidebar);
     display: flex;
     flex-direction: column;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid var(--sidebar-border);
     z-index: 100;
     transition: width 0.3s ease;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
 }
 
 .sidebarHeader {
-    padding: 20px;
+    padding: 1.25rem;
     display: flex;
     align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 0.625rem;
+    border-bottom: 1px solid var(--sidebar-border);
 }
 
 .logo {
-    width: 30px;
-    height: 30px;
+    width: 2rem;
+    height: 2rem;
     background-color: var(--header-btn);
-    border-radius: 8px;
+    border-radius: var(--border-radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--color-prm-txt);
     font-weight: bold;
 }
 
 .logoText {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-prm-txt);
 }
 
 .navMenu {
-    padding: 20px 0;
+    padding: 1.25rem 0;
     flex-grow: 1;
 }
 
 .navItem {
-    padding: 12px 20px;
+    padding: 0.75rem 1.25rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
     cursor: pointer;
     transition: all 0.2s ease;
     border-left: 4px solid transparent;
+    color: var(--color-sec-txt);
+    font-weight: 500;
 }
 
 .navItem:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--header-btn);
+    color: var(--color-prm-txt);
 }
 
 .navItem.active {
@@ -63,16 +68,17 @@
 }
 
 .navIcon {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--color-sec-txt);
 }
 
 @media (max-width: 768px) {
     .sidebar {
-        width: 60px;
+        width: 4rem;
     }
 
     .logoText {
@@ -85,5 +91,10 @@
 
     .navItem {
         justify-content: center;
+        padding: 0.75rem;
+    }
+    
+    .navIcon {
+        margin-right: 0;
     }
 }

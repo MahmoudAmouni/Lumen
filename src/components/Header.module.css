@@ -1,13 +1,14 @@
 .header {
-    background-color: #111827;
-    padding: 20px 40px;
+    background-color: var(--color-header);
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #6B6D6F;
-    height: 80px;
+    border-bottom: 1px solid var(--color-border);
+    height: 5rem;
     box-sizing: border-box;
     position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .header.centered {
@@ -22,10 +23,10 @@
 
 .headerTitle {
     font-family: 'Inter', sans-serif;
-    font-size: 32px;
-    font-weight: 400;
+    font-size: 2rem;
+    font-weight: 600;
     line-height: 100%;
-    color: #F9FAFB;
+    color: var(--color-prm-txt);
     margin: 0;
     display: flex;
     align-items: center;
@@ -40,11 +41,11 @@
 }
 
 .themeToggle {
-    background-color: #334053;
+    background-color: var(--header-btn);
     border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -54,27 +55,28 @@
 }
 
 .themeToggle:hover {
-    background-color: #3d4d63;
+    background-color: var(--color-btn);
+    color: var(--btn-txt);
 }
 
 .logoutBtn {
-    background-color: #60A5FA;
-    color: #FFFFFF;
+    background-color: var(--color-btn);
+    color: var(--btn-txt);
     border: none;
-    padding: 9px 33px;
-    border-radius: 8px;
+    padding: 0.5rem 2rem;
+    border-radius: var(--border-radius);
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 1rem;
+    font-weight: 500;
     line-height: 100%;
     transition: background-color 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .logoutBtn:hover {
-    background-color: #4a90e2;
+    background-color: var(--color-btn-hover);
 }
