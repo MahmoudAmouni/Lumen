@@ -170,7 +170,7 @@
 .submitButton:hover {
   transform: translateY(-1px);
   opacity: 0.95;
-  box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-prm-txt) 10%, transparent);
 }
 
 .tableCard {

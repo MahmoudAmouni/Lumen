@@ -2,8 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { IoMdAnalytics } from "react-icons/io";
 import { BiTask } from "react-icons/bi";
-import { FiLogIn } from "react-icons/fi";
-import logo from "../assets/lumen-logo.png";
+import logo from "../../assets/lumen-logo.png";
 
 export default function Sidebar() {
   const navigate = useNavigate();

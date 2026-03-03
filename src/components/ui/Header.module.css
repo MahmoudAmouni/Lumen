@@ -65,7 +65,7 @@
 .themeToggle:hover {
     transform: translateY(-1px);
     opacity: 0.95;
-    box-shadow: 0 12px 26px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-prm-txt) 10%, transparent);
 }
 
 .themeToggle svg {
@@ -100,7 +100,7 @@
     transform: translateY(-1px);
     opacity: 0.95;
     background: color-mix(in srgb, var(--color-btn) 26%, transparent);
-    box-shadow: 0 14px 30px color-mix(in srgb, var(--color-prm-txt) 18%, transparent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-prm-txt) 10%, transparent);
 }
 
 .logoutIcon {

@@ -4,7 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
-import { authAPI } from "../services/api";
+import { authAPI } from "../../services/api";
 
 interface HeaderProps {
   title: string | ReactNode;
