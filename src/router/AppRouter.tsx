@@ -11,7 +11,7 @@ import InterviewNotes from "../pages/InterviewNotes";
 import AdminDashboard from "../pages/AdminDashboard";
 import JobDetail from "../pages/JobDetail";
 import NotFound from "../pages/NotFound";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../components/ui/ProtectedRoute";
 
 export const AppRouter = () => {
   return (

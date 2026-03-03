@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/LandingPage.module.css";
-import Footer from "../components/Footer";
-import ContactModal from "../components/ContactModal";
+import Footer from "../components/ui/Footer";
+import ContactModal from "../components/landing/ContactModal";
 import logo from "../assets/lumen-logo.png";
 import bg from "../assets/background.png";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { ThemeToggle } from "../components/ui/ThemeToggle";
 import {
   FiFileText,
   FiColumns,

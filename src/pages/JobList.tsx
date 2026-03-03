@@ -4,11 +4,11 @@ import { useQueries } from "@tanstack/react-query";
 import { FiPlus } from "react-icons/fi";
 import ClipLoader from "react-spinners/ClipLoader";
 
-import Header from "../components/Header";
-import Sidebar from "../components/SiderBar";
-import JobItem from "../components/JobItem";
-import SelectField from "../components/SelectField";
-import SearchField from "../components/SearchField";
+import Header from "../components/ui/Header";
+import Sidebar from "../components/ui/SiderBar";
+import JobItem from "../components/jobs/JobItem";
+import SelectField from "../components/ui/SelectField";
+import SearchField from "../components/ui/SearchField";
 
 import styles from "../styles/JobList.module.css";
 import { useJobsByCompany } from "../hooks/useJobsByCompany";

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/ClipLoader";
-import DynamicSection from "../components/DynamicSection";
-import Header from "../components/Header";
-import Sidebar from "../components/SiderBar";
+import DynamicSection from "../components/createJob/DynamicSection";
+import Header from "../components/ui/Header";
+import Sidebar from "../components/ui/SiderBar";
 import styles from "../styles/CreateJob.module.css";
 import { useData } from "../context/DataContext";
 import { useSkills } from "../hooks/useSkills";

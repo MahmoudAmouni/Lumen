@@ -3,9 +3,9 @@ import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/ClipLoader";
 
-import Header from "../components/Header";
-import Sidebar from "../components/SiderBar";
-import CandidateQuickView from "../components/CandidateQuickView";
+import Header from "../components/ui/Header";
+import Sidebar from "../components/ui/SiderBar";
+import CandidateQuickView from "../components/candidates/CandidateQuickView";
 
 import styles from "../styles/Candidates.module.css";
 import { FiSearch, FiEye, FiUpload, FiPlus } from "react-icons/fi";

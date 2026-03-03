@@ -1,5 +1,5 @@
-import Header from "../components/Header";
-import CandidateSidebar from "../components/CandidateSidebar";
+import Header from "../components/ui/Header";
+import CandidateSidebar from "../components/candidate/CandidateSidebar";
 import styles from "../styles/CandidateDetail.module.css";
 import { useSearchParams } from "react-router-dom";
 import { useData } from "../context/DataContext";

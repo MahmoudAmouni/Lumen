@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Header from "../components/Header";
-import CandidateSidebar from "../components/CandidateSidebar";
+import Header from "../components/ui/Header";
+import CandidateSidebar from "../components/candidate/CandidateSidebar";
 import styles from "../styles/AICopilot.module.css";
 import { useData } from "../context/DataContext";
 import { useCandidateProfile } from "../hooks/useCandidateProfile";

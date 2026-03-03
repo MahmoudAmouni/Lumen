@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "../components/Header";
-import Sidebar from "../components/SiderBar";
+import Header from "../components/ui/Header";
+import Sidebar from "../components/ui/SiderBar";
 import { IoMdAnalytics } from "react-icons/io";
 import { FiChevronDown } from "react-icons/fi";
 import styles from "../styles/DashboardPage.module.css";

@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import styles from "./CandidateQuickView.module.css";
-import { useData } from "../context/DataContext";
-import type { Candidate, Job } from "../context/DataContext";
+import { useData } from "../../context/DataContext";
+import type { Candidate, Job } from "../../context/DataContext";
 import { FiX } from "react-icons/fi";
 import ConfirmModal from "./ConfirmModal";
-import { useConfirm } from "../hooks/useConfirm";
+import { useConfirm } from "../../hooks/useConfirm";
 
 interface CandidateQuickViewProps {
   candidate: Candidate;
