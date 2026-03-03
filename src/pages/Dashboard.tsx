@@ -75,6 +75,8 @@ function Dropdown({ options, value, onChange, className, disabled, loading }: Dr
 
 
 
+import { ClipLoader, BeatLoader } from "react-spinners";
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -84,9 +86,9 @@ export default function Dashboard() {
   const companyId =
     typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
 
-  useJobsByCompany(companyId);
+  const { isLoading: isLoadingJobs } = useJobsByCompany(companyId);
   const updateJobStatusMutation = useUpdateJobStatus(companyId);
-  const { data: allCandidates = [] } = useCandidatesByJob(
+  const { data: allCandidates = [], isLoading: isLoadingCandidates } = useCandidatesByJob(
     selectedJobId || null
   );
 
@@ -161,7 +163,12 @@ export default function Dashboard() {
         <Header title="SE Factory" />
 
         <div className={styles.pageContent}>
-          {jobs.length === 0 ? (
+          {isLoadingJobs ? (
+            <div className={styles.loaderContainer}>
+              <ClipLoader color="var(--color-btn)" size={50} />
+              <p className={styles.loaderText}>Loading dashboard data...</p>
+            </div>
+          ) : jobs.length === 0 ? (
             <div className={styles.emptyContainer}>
               <div className={styles.premiumEmptyCard}>
                 <div className={styles.iconCircle}>
@@ -233,15 +240,21 @@ export default function Dashboard() {
               {/* ── Summary tiles ── */}
               <div className={styles.summaryBar}>
                 <div className={styles.summaryTile} style={{ "--tile-accent": "var(--color-btn)" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{totalCandidates}</span>
+                  <span className={styles.tileValue}>
+                    {isLoadingCandidates ? <BeatLoader size={8} color="var(--color-btn)" /> : totalCandidates}
+                  </span>
                   <span className={styles.tileLabel}>Total Applicants</span>
                 </div>
                 <div className={styles.summaryTile} style={{ "--tile-accent": "#22c55e" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{hiredCount}</span>
+                  <span className={styles.tileValue}>
+                    {isLoadingCandidates ? <BeatLoader size={8} color="#22c55e" /> : hiredCount}
+                  </span>
                   <span className={styles.tileLabel}>Hired</span>
                 </div>
                 <div className={styles.summaryTile} style={{ "--tile-accent": "#3b82f6" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{activeCount}</span>
+                  <span className={styles.tileValue}>
+                    {isLoadingCandidates ? <BeatLoader size={8} color="#3b82f6" /> : activeCount}
+                  </span>
                   <span className={styles.tileLabel}>In Pipeline</span>
                 </div>
                 <div className={styles.summaryTile} style={{ "--tile-accent": "#a855f7" } as React.CSSProperties}>
@@ -315,10 +328,14 @@ export default function Dashboard() {
                             </span>
 
                             {/* Count */}
-                            <span className={styles.tdCount}>{stage.count}</span>
+                            <span className={styles.tdCount}>
+                              {isLoadingCandidates ? <BeatLoader size={6} color={accent} /> : stage.count}
+                            </span>
 
                             {/* Percentage */}
-                            <span className={styles.tdPct}>{stage.pct}%</span>
+                            <span className={styles.tdPct}>
+                              {isLoadingCandidates ? "..." : `${stage.pct}%`}
+                            </span>
 
                             {/* Progress bar */}
                             <span className={styles.tdBar}>
@@ -326,7 +343,7 @@ export default function Dashboard() {
                                 <span
                                   className={styles.barFill}
                                   style={{
-                                    width: `${stage.pct}%`,
+                                    width: `${isLoadingCandidates ? 0 : stage.pct}%`,
                                     background: accent,
                                   }}
                                 />
