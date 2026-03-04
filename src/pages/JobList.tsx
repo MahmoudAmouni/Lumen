@@ -10,7 +10,7 @@ import styles from "../styles/JobList.module.css";
 import { useJobsByCompany } from "../hooks/useJobsByCompany";
 import { fetchCandidatesByJobAndStage } from "../api/candidate.api";
 
-// Internal components
+
 import { JobListHeader } from "../components/jobs/JobListHeader";
 import { JobListFilters } from "../components/jobs/JobListFilters";
 import { JobListEmptyState } from "../components/jobs/JobListEmptyState";
