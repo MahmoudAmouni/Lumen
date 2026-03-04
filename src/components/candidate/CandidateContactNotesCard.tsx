@@ -1,10 +1,14 @@
 import styles from "../../styles/CandidateDetail.module.css";
+import { FiFileText } from "react-icons/fi";
 
 export default function CandidateContactNotesCard({ candidate }: { candidate: any }) {
   return (
     <section className={styles.card}>
       <div className={styles.cardHeader}>
-        <h3 className={styles.cardTitle}>Contact & Internal Notes</h3>
+        <h3 className={styles.cardTitle}>
+          <FiFileText className={styles.titleIcon} />
+          Contact & Internal Notes
+        </h3>
       </div>
 
       <div className={styles.cardBody}>

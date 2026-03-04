@@ -235,6 +235,23 @@
   color: var(--color-sec-txt);
 }
 
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  width: 100%;
+  gap: 16px;
+}
+
+.loaderText {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  color: var(--color-sec-txt);
+  font-weight: 500;
+}
+
 /* responsive */
 @media (max-width: 768px) {
   .main {

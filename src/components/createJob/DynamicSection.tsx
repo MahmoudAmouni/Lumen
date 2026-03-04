@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FiMinus, FiPlus, FiChevronUp, FiChevronDown } from "react-icons/fi";
-import styles from "../styles/CreateJob.module.css";
+import styles from "../../styles/CreateJob.module.css";
 
 interface DynamicSectionProps {
   title: string;

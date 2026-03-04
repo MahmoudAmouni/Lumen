@@ -1,5 +1,6 @@
-import { useTheme } from "../context/ThemeContext";
-import styles from "../styles/ThemeToggle.module.css";
+import { useTheme } from "../../context/ThemeContext";
+import styles from "../../styles/ThemeToggle.module.css";
+import { FiSun, FiMoon } from "react-icons/fi";
 
 export const ThemeToggle = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -12,8 +13,7 @@ export const ThemeToggle = () => {
       title="Toggle theme"
       type="button"
     >
-      <span className={styles.icon}>{isDark ? "☀️" : "🌙"}</span>
-      <span className={styles.label}>{isDark ? "Light" : "Dark"}</span>
+      <span className={styles.icon}>{isDark ? <FiSun /> : <FiMoon />}</span>
     </button>
   );
 };

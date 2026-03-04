@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FiX } from "react-icons/fi";
 import ClipLoader from "react-spinners/ClipLoader";
 import toast from "react-hot-toast";
-import { useSendContactEmail } from "../hooks/useSendContactEmail";
+import { useSendContactEmail } from "../../hooks/useSendContactEmail";
 import styles from "./ContactModal.module.css";
 
 interface ContactModalProps {

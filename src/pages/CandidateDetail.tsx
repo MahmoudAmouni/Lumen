@@ -1,5 +1,5 @@
-import Header from "../components/Header";
-import CandidateSidebar from "../components/CandidateSidebar";
+import Header from "../components/ui/Header";
+import CandidateSidebar from "../components/candidate/CandidateSidebar";
 import styles from "../styles/CandidateDetail.module.css";
 import { useSearchParams } from "react-router-dom";
 import { useData } from "../context/DataContext";
@@ -83,23 +83,31 @@ export default function CandidateDetail() {
         <Header title="Candidate Overview" />
 
         <div className={styles.pageContent}>
-          <CandidateHeaderCard candidate={candidate} jobTitle={job?.title} />
+          <div className={styles.headerArea}>
+            <CandidateHeaderCard candidate={candidate} jobTitle={job?.title} />
+          </div>
 
-          {job ? (
-            <CandidateAppliedForCard candidate={candidate} job={job} />
-          ) : null}
+          <div className={styles.bentoGrid}>
+            <div className={styles.mainCol}>
+              <CandidateTimelineCard
+                candidate={candidate}
+                appliedDate={appliedDate}
+                formatDate={formatDate}
+              />
+              <CandidateContactNotesCard candidate={candidate} />
+            </div>
 
-          {candidate.attachments?.length ? (
-            <CandidateAttachmentsCard attachments={candidate.attachments} />
-          ) : null}
+            <div className={styles.sideCol}>
+              <CandidateStateCard candidate={candidate} message={`Current Stage: ${candidate.stage}`} />
+              {job ? (
+                <CandidateAppliedForCard candidate={candidate} job={job} />
+              ) : null}
 
-          <CandidateContactNotesCard candidate={candidate} />
-
-          <CandidateTimelineCard
-            candidate={candidate}
-            appliedDate={appliedDate}
-            formatDate={formatDate}
-          />
+              {candidate.attachments?.length ? (
+                <CandidateAttachmentsCard attachments={candidate.attachments} />
+              ) : null}
+            </div>
+          </div>
         </div>
       </div>
     </>

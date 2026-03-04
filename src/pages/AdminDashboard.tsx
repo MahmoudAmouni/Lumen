@@ -1,8 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import Header from "../components/Header";
+import Header from "../components/ui/Header";
 import AdminSidebar from "../components/admin/AdminSidebar";
-import CompanyUsersModal from "../components/CompanyUsersModal";
+import CompanyUsersModal from "../components/admin/CompanyUsersModal";
 import styles from "../styles/AdminDashboard.module.css";
 
 import { useData } from "../context/DataContext";

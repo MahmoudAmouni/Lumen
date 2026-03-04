@@ -1,5 +1,5 @@
 import styles from "./Footer.module.css";
-import logo from "../assets/lumen-logo.png";
+import logo from "../../assets/lumen-logo.png";
 import { FaFacebook, FaInstagram, FaTiktok, FaSnapchat } from "react-icons/fa";
 
 export default function Footer() {

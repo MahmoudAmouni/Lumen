@@ -1,18 +1,20 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
-import { FiPlus } from "react-icons/fi";
-import ClipLoader from "react-spinners/ClipLoader";
 
-import Header from "../components/Header";
-import Sidebar from "../components/SiderBar";
-import JobItem from "../components/JobItem";
-import SelectField from "../components/SelectField";
-import SearchField from "../components/SearchField";
+import Header from "../components/ui/Header";
+import Sidebar from "../components/ui/SiderBar";
+import JobItem from "../components/jobs/JobItem";
 
 import styles from "../styles/JobList.module.css";
 import { useJobsByCompany } from "../hooks/useJobsByCompany";
 import { fetchCandidatesByJobAndStage } from "../api/candidate.api";
+
+
+import { JobListHeader } from "../components/jobs/JobListHeader";
+import { JobListFilters } from "../components/jobs/JobListFilters";
+import { JobListEmptyState } from "../components/jobs/JobListEmptyState";
+import { JobListSkeleton } from "../components/jobs/JobListSkeleton";
 
 export default function JobList() {
   const navigate = useNavigate();
@@ -99,76 +101,28 @@ export default function JobList() {
         <Header title="SE Factory" />
 
         <div className={styles.pageContent}>
-          <div className={styles.pageHeader}>
-            <h2 className={styles.pageTitle}>Job Roles</h2>
+          <JobListHeader onAddRole={handleAddRole} />
 
-            <button
-              className={styles.addRoleBtn}
-              onClick={handleAddRole}
-              type="button"
-            >
-              <FiPlus size={16} />
-              <span>Add Role</span>
-            </button>
-          </div>
-
-          <div className={styles.searchFilterContainer}>
-            <SearchField
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder="Search roles..."
-            />
-
-            <SelectField
-              id="statusFilter"
-              label="Filter by status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
-              <option value="draft">Draft</option>
-              <option value="paused">Paused</option>
-            </SelectField>
-          </div>
+          <JobListFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+          />
 
           {isLoading ? (
-            <div className={styles.skeletonGrid}>
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className={styles.skeletonCard} />
-              ))}
-            </div>
+            <JobListSkeleton />
           ) : jobsWithStats.length === 0 ? (
-            <div className={styles.emptyContainer}>
-              {searchTerm || statusFilter !== "all" ? (
-                <div className={styles.noJobs}>
-                   No jobs found matching your filters. Try adjusting your search or filter criteria.
-                </div>
-              ) : (
-                <div className={styles.premiumEmptyCard}>
-                  <div className={styles.iconCircle}>
-                    <FiPlus size={32} />
-                  </div>
-                  <h3 className={styles.emptyTitle}>Ready to hire?</h3>
-                  <p className={styles.emptySubtext}>
-                    You haven't created any job roles yet. Start building your team by posting your first opportunity.
-                  </p>
-                  <button 
-                    className={styles.createFirstBtn}
-                    onClick={handleAddRole}
-                  >
-                    Create Your First Job
-                  </button>
-                </div>
-              )}
-            </div>
+            <JobListEmptyState
+              searchTerm={searchTerm}
+              statusFilter={statusFilter}
+              onAddRole={handleAddRole}
+            />
           ) : (
             <div className={styles.jobCardsGrid}>
               {jobsWithStats.map((job: any) => (
-                <button
+                <div
                   key={job.id}
-                  type="button"
                   className={styles.jobCardLink}
                   onClick={() => handleJobClick(job.id)}
                 >
@@ -178,7 +132,7 @@ export default function JobList() {
                     status={job.status || "open"}
                     stats={job.stats}
                   />
-                </button>
+                </div>
               ))}
             </div>
           )}

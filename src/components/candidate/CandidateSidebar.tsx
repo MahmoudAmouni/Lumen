@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { candidateAPI } from "../services/api";
+import { candidateAPI } from "../../services/api";
 import styles from "./CandidateSidebar.module.css";
-import logo from "../assets/lumen-logo.png";
+import logo from "../../assets/lumen-logo.png";
 import { FiUser, FiCpu, FiFileText, FiArrowLeft } from "react-icons/fi";
 
 type NavItem = {

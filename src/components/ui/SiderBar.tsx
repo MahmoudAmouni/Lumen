@@ -2,8 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { IoMdAnalytics } from "react-icons/io";
 import { BiTask } from "react-icons/bi";
-import { FiLogIn } from "react-icons/fi";
-import logo from "../assets/lumen-logo.png";
+import logo from "../../assets/lumen-logo.png";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -15,7 +14,13 @@ export default function Sidebar() {
     return current === target || current.startsWith(target + "/");
   };
 
-  const isJobActive = isActive("/job") || isActive("/createJob") || isActive("/jobs");
+  const isJobActive =
+    isActive("/job") ||
+    isActive("/createJob") ||
+    isActive("/jobs") ||
+    isActive("/candidate") ||
+    isActive("/candidate-detail") ||
+    isActive("/interview-notes");
 
   return (
     <aside className={styles.sidebar} aria-label="Sidebar">

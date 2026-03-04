@@ -1,79 +1,19 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "../components/Header";
-import Sidebar from "../components/SiderBar";
-import { IoMdAnalytics } from "react-icons/io";
-import { FiChevronDown } from "react-icons/fi";
+import Header from "../components/ui/Header";
+import Sidebar from "../components/ui/SiderBar";
 import styles from "../styles/DashboardPage.module.css";
 import { useData } from "../context/DataContext";
-import type { Job } from "../context/DataContext";
+
 import { useJobsByCompany } from "../hooks/useJobsByCompany";
 import { useUpdateJobStatus } from "../hooks/useUpdateJobStatus";
 import { useCandidatesByJob } from "../hooks/useCandidatesByJob";
+import { ClipLoader } from "react-spinners";
 
-interface DropdownProps {
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
-  className?: string;
-  disabled?: boolean;
-  loading?: boolean;
-}
-
-function Dropdown({ options, value, onChange, className, disabled, loading }: DropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const selectedOption = options.find((opt) => opt.value === value);
-
-  return (
-    <div ref={dropdownRef} className={`${styles.dropdownRoot} ${className || ""} ${isOpen ? styles.dropdownOpen : ""} ${disabled || loading ? styles.dropdownDisabled : ""}`}>
-      <button
-        type="button"
-        className={styles.dropdownToggle}
-        onClick={() => !(disabled || loading) && setIsOpen(!isOpen)}
-        disabled={disabled || loading}
-      >
-        <span className={styles.dropdownValue}>{selectedOption?.label || "Select..."}</span>
-        {loading ? (
-          <span className={styles.dropdownLoader} />
-        ) : (
-          <FiChevronDown className={styles.dropdownArrow} />
-        )}
-      </button>
-
-      {isOpen && !loading && (
-        <div className={styles.dropdownMenu}>
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className={`${styles.dropdownOption} ${option.value === value ? styles.dropdownOptionActive : ""}`}
-              onClick={() => {
-                onChange(option.value);
-                setIsOpen(false);
-              }}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-
+import { DashboardHeader } from "../components/dashboard/DashboardHeader";
+import { DashboardSummary } from "../components/dashboard/DashboardSummary";
+import { DashboardPipeline } from "../components/dashboard/DashboardPipeline";
+import { DashboardEmptyState } from "../components/dashboard/DashboardEmptyState";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -84,9 +24,9 @@ export default function Dashboard() {
   const companyId =
     typeof window !== "undefined" ? localStorage.getItem("company_id") : null;
 
-  useJobsByCompany(companyId);
+  const { isLoading: isLoadingJobs } = useJobsByCompany(companyId);
   const updateJobStatusMutation = useUpdateJobStatus(companyId);
-  const { data: allCandidates = [] } = useCandidatesByJob(
+  const { data: allCandidates = [], isLoading: isLoadingCandidates } = useCandidatesByJob(
     selectedJobId || null
   );
 
@@ -101,16 +41,6 @@ export default function Dashboard() {
 
   const selectedJob = jobs.find((j) => j.id === selectedJobId);
   const pipelineStages = selectedJob ? getPipelineStages(selectedJobId) : [];
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!selectedJobId) return;
-    const newStatus = e.target.value as Job["status"];
-    updateJobStatusMutation.mutate({ jobId: selectedJobId, status: newStatus });
-  };
-
-  const handleJobChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedJobId(e.target.value);
-  };
 
   const stagesWithCounts = useMemo(() => {
     const total = allCandidates.length;
@@ -147,8 +77,6 @@ export default function Dashboard() {
   };
 
   const currentStatus = selectedJob?.status || "open";
-  const statusClass = styles[`status_${currentStatus}`];
-
   const totalCandidates = allCandidates.length;
   const hiredCount = stagesWithCounts.find((s) => s.tone === "success")?.count ?? 0;
   const activeCount = stagesWithCounts.filter((s) => s.tone === "primary").reduce((acc, s) => acc + s.count, 0);
@@ -161,190 +89,41 @@ export default function Dashboard() {
         <Header title="SE Factory" />
 
         <div className={styles.pageContent}>
-          {jobs.length === 0 ? (
-            <div className={styles.emptyContainer}>
-              <div className={styles.premiumEmptyCard}>
-                <div className={styles.iconCircle}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                  </svg>
-                </div>
-                <h2 className={styles.emptyTitle}>Ready to grow your team?</h2>
-                <p className={styles.emptySubtext}>
-                  You haven't created any job postings yet. Start by creating your first job to see the hiring pipeline in action.
-                </p>
-                <button
-                  className={styles.createFirstJobBtn}
-                  onClick={() => navigate('/createJob')}
-                >
-                  Create Your First Job
-                </button>
-              </div>
+          {isLoadingJobs ? (
+            <div className={styles.loaderContainer}>
+              <ClipLoader color="var(--color-btn)" size={50} />
+              <p className={styles.loaderText}>Loading dashboard data...</p>
             </div>
+          ) : jobs.length === 0 ? (
+            <DashboardEmptyState />
           ) : (
             <>
-              {/* ── Top section ── */}
-              <div className={styles.topSection}>
-                <div className={styles.titleBlock}>
-                  <h1 className={styles.pageTitle}>Hiring Dashboard</h1>
-                  <p className={styles.pageSubtitle}>
-                    {jobs.length} active role{jobs.length !== 1 ? "s" : ""} · updated live
-                  </p>
-                </div>
+              <DashboardHeader
+                jobCount={jobs.length}
+                jobs={jobs}
+                selectedJobId={selectedJobId}
+                onJobChange={setSelectedJobId}
+                currentStatus={currentStatus}
+                onStatusChange={(status) => 
+                  updateJobStatusMutation.mutate({ jobId: selectedJobId, status })
+                }
+                isStatusUpdating={updateJobStatusMutation.isPending}
+              />
 
-                <div className={styles.controlsRow}>
-                  {/* Job selector */}
-                  <div className={styles.jobPickerWrapper}>
-                    <span className={styles.jobPickerLabel}>Role</span>
-                    <Dropdown
-                      options={jobs.map(j => ({ value: j.id, label: j.title }))}
-                      value={selectedJobId}
-                      onChange={setSelectedJobId}
-                      className={styles.jobPickerDropdown}
-                    />
-                  </div>
+              <DashboardSummary
+                isLoadingCandidates={isLoadingCandidates}
+                totalCandidates={totalCandidates}
+                hiredCount={hiredCount}
+                activeCount={activeCount}
+                stagesCount={stagesWithCounts.length}
+              />
 
-                  {/* Status badge */}
-                  {selectedJob && (
-                    <span className={`${styles.statusBadge} ${statusClass}`}>
-                      <span className={styles.statusDot} />
-                      <Dropdown
-                        options={[
-                          { value: "open", label: "Open" },
-                          { value: "closed", label: "Closed" },
-                          { value: "draft", label: "Draft" },
-                          { value: "paused", label: "Paused" },
-                        ]}
-                        value={currentStatus}
-                        onChange={(val) => 
-                          updateJobStatusMutation.mutate({ jobId: selectedJobId, status: val as Job["status"] })
-                        }
-                        className={styles.statusPickerDropdown}
-                        loading={updateJobStatusMutation.isPending}
-                      />
-                    </span>
-                  )}
-
-                </div>
-
-              </div>
-
-              {/* ── Summary tiles ── */}
-              <div className={styles.summaryBar}>
-                <div className={styles.summaryTile} style={{ "--tile-accent": "var(--color-btn)" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{totalCandidates}</span>
-                  <span className={styles.tileLabel}>Total Applicants</span>
-                </div>
-                <div className={styles.summaryTile} style={{ "--tile-accent": "#22c55e" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{hiredCount}</span>
-                  <span className={styles.tileLabel}>Hired</span>
-                </div>
-                <div className={styles.summaryTile} style={{ "--tile-accent": "#3b82f6" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{activeCount}</span>
-                  <span className={styles.tileLabel}>In Pipeline</span>
-                </div>
-                <div className={styles.summaryTile} style={{ "--tile-accent": "#a855f7" } as React.CSSProperties}>
-                  <span className={styles.tileValue}>{stagesWithCounts.length}</span>
-                  <span className={styles.tileLabel}>Pipeline Stages</span>
-                </div>
-              </div>
-
-              {/* ── Pipeline table ── */}
-              {stagesWithCounts.length === 0 ? (
-                <div className={styles.emptyContainer}>
-                  <div className={styles.regularEmptyCard}>
-                    <p className={styles.stateText}>
-                      No pipeline stages defined for this job.
-                    </p>
-                    <button
-                      className={styles.inlineActionBtn}
-                      onClick={() => navigate(`/jobs/${selectedJobId}`)}
-                    >
-                      Configure Pipeline →
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className={styles.sectionHeader}>
-                    <h2 className={styles.sectionTitle}>Pipeline Stages</h2>
-                    <span className={styles.sectionCount}>{stagesWithCounts.length} stages</span>
-                  </div>
-
-                  <div className={styles.pipelineTable}>
-                    {/* Header */}
-                    <div className={styles.tableHead}>
-                      <span className={styles.thCell}>Stage</span>
-                      <span className={styles.thCell}>Candidates</span>
-                      <span className={styles.thCell}>Share</span>
-                      <span className={styles.thCell}>Progress</span>
-                      <span className={styles.thCell} />
-                    </div>
-
-                    {/* Rows */}
-                    <div className={styles.tableBody}>
-                      {stagesWithCounts.map((stage, index) => {
-                        const accent =
-                          stage.tone === "success"
-                            ? "#22c55e"
-                            : stage.tone === "danger"
-                            ? "#ef4444"
-                            : index % 5 === 0
-                            ? "#6366f1"
-                            : index % 5 === 1
-                            ? "#3b82f6"
-                            : index % 5 === 2
-                            ? "#0ea5e9"
-                            : index % 5 === 3
-                            ? "#10b981"
-                            : "#8b5cf6";
-
-                        return (
-                          <button
-                            key={index}
-                            type="button"
-                            className={styles.tableRow}
-                            style={{ "--row-accent": accent } as React.CSSProperties}
-                            onClick={() => handleCardClick(stage.label)}
-                          >
-                            {/* Stage name */}
-                            <span className={styles.tdName}>
-                              <span className={styles.stageColorDot} />
-                              <span className={styles.stageName}>{stage.label}</span>
-                            </span>
-
-                            {/* Count */}
-                            <span className={styles.tdCount}>{stage.count}</span>
-
-                            {/* Percentage */}
-                            <span className={styles.tdPct}>{stage.pct}%</span>
-
-                            {/* Progress bar */}
-                            <span className={styles.tdBar}>
-                              <span className={styles.barTrack}>
-                                <span
-                                  className={styles.barFill}
-                                  style={{
-                                    width: `${stage.pct}%`,
-                                    background: accent,
-                                  }}
-                                />
-                              </span>
-                            </span>
-
-                            {/* Arrow */}
-                            <span className={styles.tdAction}>
-                              <span className={styles.rowArrow}>→</span>
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              )}
-
+              <DashboardPipeline
+                stagesWithCounts={stagesWithCounts}
+                isLoadingCandidates={isLoadingCandidates}
+                onCardClick={handleCardClick}
+                onConfigurePipeline={() => navigate(`/jobs/${selectedJobId}`)}
+              />
             </>
           )}
         </div>

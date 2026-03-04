@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 interface ApiResponse<T> {
-  status: "success" | "failure" | "Validation failed";
+  status: "success" | "failure" | "Validation failed" | "Login successful" | "User created successfully" | string;
   payload: T;
 }
 
@@ -195,7 +195,12 @@ async function apiRequest<T>(
       throw new Error(`Invalid JSON response from server at ${endpoint}: ${parseError.message}`);
     }
 
-    if (data.status === "failure" || data.status === "Validation failed") {
+    const isSuccessStatus = 
+      data.status === "success" || 
+      data.status === "Login successful" || 
+      data.status === "User created successfully";
+
+    if (!isSuccessStatus) {
       const errorMessage = formatValidationErrors(data.payload);
       throw new Error(errorMessage);
     }
@@ -238,7 +243,7 @@ interface BulkImportData {
 
 export const candidateAPI = {
   async getCandidatesByJob(jobId: string, stage?: string): Promise<any[]> {
-    let endpoint = `/v1/candidates/job/${jobId}`;
+    let endpoint = `/v1/auth/candidates/job/${jobId}`;
     const params = new URLSearchParams();
     if (stage) {
       params.append("stage_name", stage);
@@ -251,7 +256,7 @@ export const candidateAPI = {
   },
 
   async getCandidateProfile(candidateId: string, jobId?: string): Promise<any> {
-    let endpoint = `/v1/candidates/${candidateId}/profile`;
+    let endpoint = `/v1/auth/candidates/${candidateId}/profile`;
     if (jobId) {
       endpoint += `?job_id=${jobId}`;
     }
@@ -259,21 +264,21 @@ export const candidateAPI = {
   },
 
   async createCandidate(data: CreateCandidateData): Promise<any> {
-    return apiRequest<any>("/v1/candidates", {
+    return apiRequest<any>("/v1/auth/candidates", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   async updateCandidateStage(candidateId: string, jobId: string, stage: string): Promise<any> {
-    return apiRequest<any>(`/v1/candidates/${candidateId}/update-stage`, {
+    return apiRequest<any>(`/v1/auth/candidates/${candidateId}/update-stage`, {
       method: "POST",
       body: JSON.stringify({ job_id: jobId, stage }),
     });
   },
 
   async bulkImportCandidates(data: BulkImportData): Promise<any> {
-    return apiRequest<any>("/import-excel-n8n", {
+    return apiRequest<any>("/v1/import-excel-n8n", {
       method: "POST",
       body: JSON.stringify(data),
     }, false);
@@ -282,84 +287,29 @@ export const candidateAPI = {
 
 export const jobAPI = {
   async createJob(data: any): Promise<any> {
-    const endpoint = "/addJob";
-    
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    return apiRequest<any>("/v1/auth/jobs/create", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
       body: JSON.stringify(data),
     });
-
-    const contentType = response.headers.get("content-type");
-    const isJson = contentType && contentType.includes("application/json");
-
-    if (isJson) {
-      try {
-        const responseData: any = await response.json();
-        
-        if (responseData.status && responseData.payload) {
-          const payload = responseData.payload;
-          if (payload.id || payload.job || payload.job_id || 
-              (payload.job && (payload.job.id || payload.job.job_id)) ||
-              (typeof payload === "object" && "id" in payload)) {
-            return payload.job || payload;
-          }
-          
-          if (responseData.status === "success" && responseData.payload) {
-            return responseData.payload;
-          }
-        } else {
-          if (responseData.id || responseData.job_id || 
-              (responseData.job && (responseData.job.id || responseData.job.job_id))) {
-            return responseData;
-          }
-        }
-        
-        if (!response.ok) {
-          const errorMessage = typeof responseData.payload === "string" 
-            ? responseData.payload 
-            : (responseData.payload && typeof responseData.payload === "object" && "message" in responseData.payload
-                ? String((responseData.payload as any).message)
-                : (responseData.message || `Server error: ${response.status}`));
-          throw new Error(errorMessage);
-        }
-        
-        return responseData.payload || responseData;
-      } catch (parseError: any) {
-        if (response.ok) {
-          return {} as any;
-        }
-        throw new Error(`Server error (${response.status}): ${response.statusText}`);
-      }
-    }
-
-    if (response.ok) {
-      return {} as any;
-    }
-
-    throw new Error(`Server error (${response.status}): ${response.statusText}`);
   },
 
   async getJobsByCompanyId(companyId: string): Promise<any> {
-    return apiRequest<any>(`/jobs/company/${companyId}`, {
+    return apiRequest<any>(`/v1/auth/jobs/company/${companyId}`, {
       method: "GET",
     });
   },
 
   async updateJob(jobId: string, data: any): Promise<any> {
-    return apiRequest<any>(`/updateJob/${jobId}`, {
-      method: "POST",
+    return apiRequest<any>(`/v1/auth/jobs/update/${jobId}`, {
+      method: "PUT",
       body: JSON.stringify(data),
-    }, false);
+    });
   },
 };
 
 export const authAPI = {
   async login(email: string, password: string): Promise<{ user: any; token: string }> {
-    const payload = await apiRequest<{ user: any; token: string }>("/login", {
+    const payload = await apiRequest<{ user: any; token: string }>("/v1/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }, false);
@@ -376,7 +326,7 @@ export const authAPI = {
   },
 
   async register(name: string, email: string, password: string): Promise<{ user: any; token: string }> {
-    const payload = await apiRequest<{ user: any; token: string }>("/register", {
+    const payload = await apiRequest<{ user: any; token: string }>("/v1/register", {
       method: "POST",
       body: JSON.stringify({ name, email, password }),
     }, false);
@@ -393,7 +343,7 @@ export const authAPI = {
   },
 
   async logout(): Promise<any> {
-    return apiRequest<any>("/v1/logout", {
+    return apiRequest<any>("/v1/auth/logout", {
       method: "POST",
     });
   },
@@ -401,11 +351,11 @@ export const authAPI = {
 
 export const userAPI = {
   async getAllUsers(): Promise<any[]> {
-    return apiRequest<any[]>("/v1/users");
+    return apiRequest<any[]>("/v1/auth/users");
   },
 
   async getUsersByCompany(companyId: string): Promise<any[]> {
-    return apiRequest<any[]>(`/v1/users/company/${companyId}`);
+    return apiRequest<any[]>(`/v1/auth/users/company/${companyId}`);
   },
 
   async createUser(data: {
@@ -415,7 +365,7 @@ export const userAPI = {
     company_id: string;
     role: "recruiter" | "interviewer";
   }): Promise<any> {
-    return apiRequest<any>("/v1/users", {
+    return apiRequest<any>("/v1/auth/users", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -424,11 +374,11 @@ export const userAPI = {
 
 export const companyAPI = {
   async getAllCompanies(): Promise<any[]> {
-    return apiRequest<any[]>("/v1/companies");
+    return apiRequest<any[]>("/v1/auth/companies");
   },
 
   async createCompany(name: string): Promise<any> {
-    return apiRequest<any>("/v1/companies", {
+    return apiRequest<any>("/v1/auth/companies", {
       method: "POST",
       body: JSON.stringify({ name }),
     });
@@ -437,13 +387,13 @@ export const companyAPI = {
 
 export const stageAPI = {
   async getAllStages(): Promise<any[]> {
-    return apiRequest<any[]>("/v1/stages");
+    return apiRequest<any[]>("/v1/auth/stages");
   },
 };
 
 export const skillAPI = {
   async getAllSkills(): Promise<any[]> {
-    return apiRequest<any[]>("/v1/skills");
+    return apiRequest<any[]>("/v1/auth/skills");
   },
 };
 
@@ -453,7 +403,7 @@ export const interviewAPI = {
     jobId: string | number,
     notes: string
   ): Promise<any> {
-    return apiRequest<any>("/v1/interviews/update-notes", {
+    return apiRequest<any>("/v1/auth/interviews/update-notes", {
       method: "POST",
       body: JSON.stringify({ candidate_id: candidateId, job_id: jobId, notes }),
     });
