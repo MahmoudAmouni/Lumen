@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css";
@@ -15,7 +15,7 @@ type RegisterFormValues = {
 
 export default function Register() {
   const [serverError, setServerError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
 
   const {
     register,

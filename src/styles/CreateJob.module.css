@@ -172,13 +172,13 @@
   font-size: 18px;
   font-family: "Outfit", sans-serif;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-btn) 30%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-btn) 20%, transparent);
 }
 
 .createButton:hover {
   transform: translateY(-2px);
   background-color: color-mix(in srgb, var(--color-btn) 90%, white);
-  box-shadow: 0 12px 24px color-mix(in srgb, var(--color-btn) 40%, transparent);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--color-btn) 30%, transparent);
 }
 
 .createButton:active {

@@ -1,0 +1,9 @@
+﻿src/components/candidates/CandidateQuickView.tsx(1,1): error TS6133: 'useState' is declared but its value is never read.
+src/components/createJob/CreateJobBasicInfo.tsx(1,10): error TS1484: 'UseFormRegister' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/createJob/CreateJobBasicInfo.tsx(1,27): error TS1484: 'FieldErrors' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/createJob/CreateJobBasicInfo.tsx(3,10): error TS1484: 'FormValues' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/createJob/CreateJobUtils.ts(1,28): error TS1484: 'FormValues' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/CreateJob.tsx(32,9): error TS6133: 'isLoadingStages' is declared but its value is never read.
+src/pages/JobDetail.tsx(28,48): error TS6133: 'isLoadingCandidates' is declared but its value is never read.
+src/pages/Register.tsx(2,20): error TS6133: 'useEffect' is declared but its value is never read.
+src/pages/Register.tsx(18,9): error TS6133: 'navigate' is declared but its value is never read.
