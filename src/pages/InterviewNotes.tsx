@@ -89,28 +89,32 @@ export default function InterviewNotes() {
         <Header title="Interview Notes" />
 
         <div className={styles.pageContent}>
-          {showError ? (
-            <InterviewNotesError />
-          ) : isLoading || !candidate ? (
+          {isLoading || !candidate ? (
             <InterviewNotesLoading />
           ) : (
-            <div className={styles.grid}>
-              <CandidateInfoCard
-                candidate={candidate}
-                jobTitle={job?.title}
-                interviewDate={interviewDate}
-                formatDate={formatDate}
-              />
+            <>
+              {showError ? (
+                <InterviewNotesError />
+              ) : (
+                <div className={styles.grid}>
+                  <CandidateInfoCard
+                    candidate={candidate}
+                    jobTitle={job?.title}
+                    interviewDate={interviewDate}
+                    formatDate={formatDate}
+                  />
 
-              <NotesSection
-                notes={notes}
-                setNotes={setNotes}
-                onSubmit={handleSubmit}
-                isSubmitting={updateNotesMutation.isPending}
-              />
+                  <NotesSection
+                    notes={notes}
+                    setNotes={setNotes}
+                    onSubmit={handleSubmit}
+                    isSubmitting={updateNotesMutation.isPending}
+                  />
 
-              <AutomationCallout candidateName={candidate.name} />
-            </div>
+                  <AutomationCallout candidateName={candidate.name} />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

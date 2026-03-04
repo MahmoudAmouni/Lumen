@@ -14,7 +14,13 @@ export default function Sidebar() {
     return current === target || current.startsWith(target + "/");
   };
 
-  const isJobActive = isActive("/job") || isActive("/createJob") || isActive("/jobs");
+  const isJobActive =
+    isActive("/job") ||
+    isActive("/createJob") ||
+    isActive("/jobs") ||
+    isActive("/candidate") ||
+    isActive("/candidate-detail") ||
+    isActive("/interview-notes");
 
   return (
     <aside className={styles.sidebar} aria-label="Sidebar">

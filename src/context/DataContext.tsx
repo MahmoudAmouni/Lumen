@@ -23,6 +23,7 @@ export interface Candidate {
   attachments?: string[];
   timeline?: { date: string; event: string }[];
   interviewNotes?: string;
+  rating?: number;
 }
 
 export interface PipelineStage {
@@ -69,6 +70,7 @@ interface DataContextType {
   addCandidates: (candidates: Omit<Candidate, "id" | "stage">[], jobId: string) => void;
   updateCandidateStage: (candidateId: string, newStage: string, jobId?: string) => Promise<void>;
   updateCandidateInterviewNotes: (candidateId: string, notes: string) => void;
+  updateCandidateRating: (candidateId: string, rating: number) => void;
   getCandidatesByStage: (jobId: string, stage: string) => Promise<Candidate[]>;
   getPipelineStages: (jobId: string) => PipelineStage[];
   getAllCandidatesForJob: (jobId: string) => Candidate[];
@@ -148,6 +150,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setCandidates((prev) =>
       prev.map((candidate) =>
         candidate.id === candidateId ? { ...candidate, interviewNotes: notes } : candidate
+      )
+    );
+  };
+
+  const updateCandidateRating = (candidateId: string, rating: number) => {
+    setCandidates((prev) =>
+      prev.map((candidate) =>
+        candidate.id === candidateId ? { ...candidate, rating } : candidate
       )
     );
   };
@@ -319,6 +329,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         addCandidates,
         updateCandidateStage,
         updateCandidateInterviewNotes,
+        updateCandidateRating,
         getCandidatesByStage,
         getPipelineStages,
         getAllCandidatesForJob,
