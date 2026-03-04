@@ -9,42 +9,148 @@
 }
 
 .pageContent {
-  padding: 74px 40px 40px;
+  padding: 40px;
   flex-grow: 1;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--color-bg);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 1116px;
-  height: 100%;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Bento Layout */
+.bentoGrid {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.mainCol,
+.sideCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* states */
 .stateCard {
   background: var(--color-card);
-  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
-  border-radius: 14px;
-  padding: 18px;
-  max-width: 720px;
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 8%, transparent);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px color-mix(in srgb, #000 15%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.stageHighlightCard {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-card) 98%, transparent), color-mix(in srgb, var(--color-btn) 5%, transparent));
+  border: 1px solid color-mix(in srgb, var(--color-btn) 15%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stageHighlightCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--color-btn);
+}
+
+.stateSubtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-sec-txt);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stagePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--color-btn) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-btn) 20%, transparent);
+  padding: 8px 16px;
+  border-radius: 999px;
+  align-self: flex-start;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-btn);
+  box-shadow: 0 0 10px var(--color-btn);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-btn) 40%, transparent);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-btn) 0%, transparent);
+  }
+
+  100% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-btn) 0%, transparent);
+  }
+}
+
+.stageText {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--color-prm-txt);
 }
 
 .stateText {
   margin: 0;
   font-family: "Inter", sans-serif;
-  font-size: 14px;
-  font-weight: 650;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--color-sec-txt);
 }
 
 /* header */
+.headerArea {
+  width: 100%;
+}
+
 .headerCard {
-  background: var(--color-card);
-  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 10px 22px color-mix(in srgb, #000 22%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-card) 95%, #fff), color-mix(in srgb, var(--color-card) 70%, transparent));
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 10%, transparent);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 10px 30px color-mix(in srgb, #000 20%, transparent), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.headerCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #ec4899, #f97316);
 }
 
 .headerTop {
@@ -153,17 +259,23 @@
 /* shared cards */
 .card {
   background: var(--color-card);
-  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 18%, transparent);
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 10px 22px color-mix(in srgb, #000 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 8%, transparent);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 24px color-mix(in srgb, #000 15%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px color-mix(in srgb, #000 25%, transparent);
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .cardTitle {
@@ -173,9 +285,10 @@
   gap: 10px;
 
   font-family: "Inter", sans-serif;
-  font-size: 14px;
-  font-weight: 900;
+  font-size: 16px;
+  font-weight: 800;
   color: var(--color-prm-txt);
+  letter-spacing: -0.2px;
 }
 
 .titleIcon {
@@ -310,38 +423,66 @@
 /* timeline */
 .timelineList {
   margin: 0;
-  padding: 0;
+  padding: 8px 0;
   list-style: none;
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+.timelineList::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 6px;
+  width: 2px;
+  background-color: color-mix(in srgb, var(--color-sec-txt) 20%, transparent);
 }
 
 .timelineItem {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 32px;
+  position: relative;
+}
 
-  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-sec-txt) 16%, transparent);
+.timelineItem::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--color-card);
+  border: 3px solid var(--color-btn);
+  z-index: 1;
 }
 
 .timelineDate {
   font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 900;
-  color: var(--color-prm-txt);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-btn);
+  margin-bottom: 6px;
 }
 
 .timelineText {
   font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 650;
-  color: var(--color-sec-txt);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-prm-txt);
 }
 
 /* responsive */
+@media (max-width: 1024px) {
+  .bentoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .main {
     margin-left: 0;

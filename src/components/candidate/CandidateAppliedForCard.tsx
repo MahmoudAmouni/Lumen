@@ -1,4 +1,5 @@
 import styles from "../../styles/CandidateDetail.module.css";
+import { FiBriefcase } from "react-icons/fi";
 
 type Props = {
   candidate: any;
@@ -9,7 +10,10 @@ export default function CandidateAppliedForCard({ candidate, job }: Props) {
   return (
     <section className={styles.card}>
       <div className={styles.cardHeader}>
-        <h3 className={styles.cardTitle}>Applied for</h3>
+        <h3 className={styles.cardTitle}>
+          <FiBriefcase className={styles.titleIcon} />
+          Applied for
+        </h3>
       </div>
 
       <div className={styles.appliedTop}>

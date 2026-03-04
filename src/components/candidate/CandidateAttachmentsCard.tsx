@@ -1,5 +1,5 @@
 import styles from "../../styles/CandidateDetail.module.css";
-import { FiPaperclip } from "react-icons/fi";
+import { FiPaperclip, FiDownload } from "react-icons/fi";
 
 export default function CandidateAttachmentsCard({
   attachments,
